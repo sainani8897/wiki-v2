@@ -1,0 +1,1 @@
+exports.pluck =  (arr, key) => arr.map(i => i[key]);

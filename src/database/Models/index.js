@@ -1,12 +1,13 @@
-const User = require("./User");
-const PersonalAccessTokens = require("./PersonalAccessToken");
-const Sponsorship = require("./Sponsorship");
-const MediaManager = require("./MediaManager");
-const Document = require("./Document");
-const Permission = require("./Permission");
-const Role = require("./Role");
-const Vendor = require("./Vendor");
-const Organization = require("./Organization");
+const User = require('./User')
+const PersonalAccessTokens = require('./PersonalAccessToken')
+const Sponsorship = require('./Sponsorship')
+const MediaManager = require('./MediaManager')
+const Document = require('./Document')
+const Permission = require('./Permission')
+const Role = require('./Role')
+const Vendor = require('./Vendor')
+const Organization = require('./Organization')
+const Course = require('./Course')
 
 const models = {
   User,
@@ -18,6 +19,7 @@ const models = {
   Role,
   Vendor,
   Organization,
-};
+  Course
+}
 
-module.exports = models;
+module.exports = models

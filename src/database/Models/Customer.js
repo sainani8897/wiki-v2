@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const AddressSchema = new mongoose.Schema({
   address_line1: String,
@@ -8,31 +8,30 @@ const AddressSchema = new mongoose.Schema({
   state: String,
   pincode: String,
   latitude: String,
-  longitude: String,
-});
-
+  longitude: String
+})
 
 const SocialSchema = new mongoose.Schema({
   whatsapp: String,
   instagram: String,
   twitter: String,
   facebook: String,
-  website_url: String,
-});
+  website_url: String
+})
 
 const customerSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: true
     },
     first_name: {
       type: String,
-      required: true,
+      required: true
     },
     last_name: {
       type: String,
-      required: true,
+      required: true
     },
     customer_type: {
       type: String
@@ -42,20 +41,20 @@ const customerSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      unique: true,
+      unique: true
     },
     mobile: {
       type: String,
-      unique: true,
+      unique: true
     },
     company_name: {
-      type: String,
+      type: String
     },
     company_email: {
-      type: String,
+      type: String
     },
     company_phone: {
-      type: String,
+      type: String
     },
     alt_phone: {
       type: String
@@ -64,19 +63,19 @@ const customerSchema = new mongoose.Schema(
       type: String
     },
     display_name: {
-      type: String,
+      type: String
     },
     address: {
-      type: AddressSchema,
+      type: AddressSchema
     },
     billing_address: {
-      type: AddressSchema,
+      type: AddressSchema
     },
     shiping_address: {
-      type: AddressSchema,
+      type: AddressSchema
     },
     status: {
-      type: String,
+      type: String
     },
     pan: {
       type: String
@@ -88,31 +87,31 @@ const customerSchema = new mongoose.Schema(
       type: String
     },
     social_info: {
-      type: SocialSchema,
+      type: SocialSchema
     },
     notes: String,
     contacts: [mongoose.Schema.Types.Mixed],
     org_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Organization",
-    },
+      ref: 'Organization'
+    }
   },
   { timestamps: true },
   {
     toJSON: {
-      transform(doc, ret) {
-        delete ret.__v;
-      },
-    },
+      transform (doc, ret) {
+        delete ret.__v
+      }
+    }
   }
-);
+)
 
 /**
  * Pagination
  */
 
-customerSchema.plugin(mongoosePaginate);
+customerSchema.plugin(mongoosePaginate)
 
-const Customer = mongoose.model("Customer", customerSchema);
+const Customer = mongoose.model('Customer', customerSchema)
 
-module.exports = Customer;
+module.exports = Customer

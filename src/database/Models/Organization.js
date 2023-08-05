@@ -1,34 +1,33 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const { UnauthorizedException } = require("../../exceptions");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const AddressSchema = new mongoose.Schema({
-    address_line1: String,
-    address_line2: String,
-    city: String,
-    state:String,
-    pin:String,
-    country:String,
-    country_code:String
+  address_line1: String,
+  address_line2: String,
+  city: String,
+  state: String,
+  pin: String,
+  country: String,
+  country_code: String,
 });
 
 const orgSchema = new mongoose.Schema(
   {
-    name:{
-        type:String,
-        unique: true,
-        required: true,
+    name: {
+      type: String,
+      unique: true,
+      required: true,
     },
-    website:{
-        type:String
+    website: {
+      type: String,
     },
-    org_email:{
-        type:String,
-        unique: true,
-        required: true,
+    org_email: {
+      type: String,
+      unique: true,
+      required: true,
     },
-    address:{
-        type: AddressSchema,
+    address: {
+      type: AddressSchema,
     },
   },
   { timestamps: true },
@@ -65,6 +64,9 @@ orgSchema.statics.register = async function (register) {
   });
 };
 
+/**
+ * Pagination
+ */
+orgSchema.plugin(mongoosePaginate);
 const Organization = mongoose.model("Organization", orgSchema);
-
 module.exports = Organization;

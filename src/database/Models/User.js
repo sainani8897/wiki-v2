@@ -68,6 +68,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default:"Active"
     },
+    user_type:{
+      type: String,
+      default:"Organization",
+    },
     roles: [
       {
         type: mongoose.Schema.Types.ObjectId,

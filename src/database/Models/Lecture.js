@@ -34,6 +34,11 @@ const sectionSchema = new mongoose.Schema(
         type: String
       }
     ],
+    type: {
+      type: String,
+      required: true,
+      default: 'lesson'
+    },
     content_type: {
       type: String,
       required: true,

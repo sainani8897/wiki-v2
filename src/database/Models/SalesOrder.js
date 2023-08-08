@@ -1,47 +1,47 @@
-const mongoose = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const salesOrderSchema = new mongoose.Schema(
   {
     order_no: {
       type: String,
-      required: true,
+      required: true
     },
     reference: {
-      type: String,
+      type: String
     },
-    source_type:{
+    source_type: {
       type: String,
-      default:"Sales Order"
+      default: 'Sales Order'
     },
-    pos:{
+    pos: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "PointOfSale",
+      ref: 'PointOfSale'
     },
     sale_date: {
-      type: Date,
+      type: Date
     },
     shipment_date: {
-      type: Date,
+      type: Date
     },
     customer_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
+      ref: 'Customer'
     },
     sales_executives: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User'
     }],
     sale_details: {
       sub_total: Number,
       discount_amount: Number,
       tax: Number,
-      total: Number,
+      total: Number
     },
     items: [{
       product_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        ref: 'Product'
       },
       rate: String,
       amount: String,
@@ -50,10 +50,10 @@ const salesOrderSchema = new mongoose.Schema(
     status: {
       type: String,
       default: 'Order Created',
-      required: true,
+      required: true
     },
     description: {
-      type: String,
+      type: String
     },
     customer_notes: {
       type: String
@@ -64,35 +64,35 @@ const salesOrderSchema = new mongoose.Schema(
     docs: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "MediaManager",
-      },
+        ref: 'MediaManager'
+      }
     ],
     org_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Organization",
+      ref: 'Organization'
     },
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
+      ref: 'User'
+    }
 
   },
   { timestamps: true },
   {
     toJSON: {
-      transform(doc, ret) {
-        delete ret.__v;
-      },
-    },
+      transform (doc, ret) {
+        delete ret.__v
+      }
+    }
   }
-);
+)
 
 /**
  * Pagination
  */
 
-salesOrderSchema.plugin(mongoosePaginate);
+salesOrderSchema.plugin(mongoosePaginate)
 
-const SalesOrder = mongoose.model("SalesOrder", salesOrderSchema);
+const SalesOrder = mongoose.model('SalesOrder', salesOrderSchema)
 
-module.exports = SalesOrder;
+module.exports = SalesOrder

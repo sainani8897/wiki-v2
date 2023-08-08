@@ -731,6 +731,7 @@ exports.lectureRules = (req, res, next) => {
     'payload.instructor': 'required|string',
     'payload.course': 'required',
     'payload.section': 'required',
+    'payload.type': 'required|in:lesson,quiz',
     'payload.content_type': 'required|in:text,audio,video,docs,file',
     'payload.content': 'required',
     'payload.status': 'required|string',

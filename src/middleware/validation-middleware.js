@@ -692,3 +692,70 @@ exports.courseRules = (req, res, next) => {
     }
   })
 }
+
+exports.sectionsRules = (req, res, next) => {
+  let validationRule = {
+    'payload.title': 'required|string',
+    'payload.instructor': 'required|string',
+    'payload.course': 'required',
+    'payload.status': 'required|string',
+    'payload.sort_order': 'required|numeric'
+  }
+
+  if (req.method === 'PATCH') {
+    validationRule['payload._id'] = ['required', 'regex:/^[0-9a-fA-F]{24}$/']
+  }
+
+  if (req.method === 'DELETE') {
+    validationRule = {
+      _id: 'required|array'
+    }
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      console.log(Object.values(err)[0])
+      throw new ValidationException(
+        Object.values(err.all())[0][0] ?? 'Validation Failed Bad Request!',
+        err
+      )
+    } else {
+      next()
+    }
+  })
+}
+
+exports.lectureRules = (req, res, next) => {
+  let validationRule = {
+    'payload.title': 'required|string',
+    'payload.instructor': 'required|string',
+    'payload.course': 'required',
+    'payload.section': 'required',
+    'payload.content_type': 'required|in:text,audio,video,docs,file',
+    'payload.content': 'required',
+    'payload.status': 'required|string',
+    'payload.sort_order': 'required|numeric'
+  }
+
+  if (req.method === 'PATCH') {
+    validationRule['payload._id'] = ['required', 'regex:/^[0-9a-fA-F]{24}$/']
+  }
+
+  if (req.method === 'DELETE') {
+    validationRule = {
+      _id: 'required|array'
+    }
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      console.log(Object.values(err)[0])
+      throw new ValidationException(
+        Object.values(err.all())[0][0] ?? 'Validation Failed Bad Request!',
+        err
+      )
+    } else {
+      next()
+    }
+  })
+}

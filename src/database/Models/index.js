@@ -8,6 +8,8 @@ const Role = require('./Role')
 const Vendor = require('./Vendor')
 const Organization = require('./Organization')
 const Course = require('./Course')
+const Section = require('./Section')
+const Lecture = require('./Lecture')
 
 const models = {
   User,
@@ -19,7 +21,9 @@ const models = {
   Role,
   Vendor,
   Organization,
-  Course
+  Course,
+  Section,
+  Lecture
 }
 
 module.exports = models

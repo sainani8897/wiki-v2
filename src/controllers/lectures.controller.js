@@ -1,4 +1,4 @@
-const { Course } = require('../database/Models')
+const { Lecture } = require('../database/Models')
 const { NotFoundException } = require('../exceptions')
 const { convertToSlug } = require('../helpers/helperFunctions')
 
@@ -9,7 +9,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { createdAt: -1 },
-      populate: ['instructor']
+      populate: ['instructor', 'course', 'section']
     }
 
     const query = req.query
@@ -31,7 +31,7 @@ exports.index = async function (req, res, next) {
       query.status = { $in: req.query?.status }
     }
 
-    const invoices = await Course.paginate(query, options)
+    const invoices = await Lecture.paginate(query, options)
     if (invoices.totalDocs > 0) {
       return res.send({ status: 200, message: 'Data found', data: invoices })
     } else {
@@ -49,9 +49,9 @@ exports.index = async function (req, res, next) {
 exports.show = async function (req, res, next) {
   const _id = req.params.id
   try {
-    const course = await Course.findById({ _id })
-    if (course) {
-      return res.send({ status: 200, message: 'Data found', data: course })
+    const section = await Lecture.findById({ _id })
+    if (section) {
+      return res.send({ status: 200, message: 'Data found', data: section })
     } else throw new NotFoundException('No Data Found!')
   } catch (error) {
     next(error)
@@ -63,17 +63,19 @@ exports.create = async function (req, res, next) {
     /** Basic Form */
     const payload = req.body.payload
 
-    const course = await Course.create({
+    const lecture = await Lecture.create({
       status: payload.status,
       title: payload.title,
       instructor: payload.instructor,
-      categories: payload.categories,
-      course_price: payload.course_price,
-      cut_off_price: payload.cut_off_price,
-      instruction_level: payload.instruction_level,
+      course: payload.course,
       description: payload.description,
+      sort_order: payload.sort_order,
       published_date: payload.published_date,
       slug: convertToSlug(payload.title),
+      instructor_notes: payload.instructor_notes,
+      section: payload.section,
+      content_type: payload.content_type,
+      content: payload.content,
       created_by: req.user._id,
       org_id: req.user.org_id
     })
@@ -81,16 +83,16 @@ exports.create = async function (req, res, next) {
     if (Array.isArray(payload.files)) {
       /** Files */
       payload.files.forEach((file) => {
-        course.files.push(file)
+        lecture.files.push(file)
       });
 
-      (await course).save()
+      (await lecture).save()
     }
 
     return res.send({
       status: 200,
       message: 'Created Successfully',
-      data: course
+      data: lecture
     })
   } catch (error) {
     next(error)
@@ -107,23 +109,24 @@ exports.update = async function (req, res, next) {
       return res.send({ status: 404, message: 'Not found!' })
     }
 
-    const course = await Course.findById({ _id })
-    if (!course) {
+    const lecture = await Lecture.findById({ _id })
+    if (!lecture) {
       return res.send({ status: 404, message: 'No data found', data: {} })
     }
 
-    await course.update({
+    await lecture.update({
       status: payload.status,
       title: payload.title,
       instructor: payload.instructor,
-      categories: payload.categories,
-      course_price: payload.course_price,
-      cut_off_price: payload.cut_off_price,
-      instruction_level: payload.instruction_level,
+      course: payload.course,
       description: payload.description,
-      tags: payload.tags,
+      sort_order: payload.sort_order,
       published_date: payload.published_date,
       slug: convertToSlug(payload.title),
+      instructor_notes: payload.instructor_notes,
+      section: payload.section,
+      content_type: payload.content_type,
+      content: payload.content,
       created_by: req.user._id,
       org_id: req.user.org_id
     })
@@ -141,7 +144,7 @@ exports.update = async function (req, res, next) {
     return res.send({
       status: 200,
       message: 'Updated Successfully',
-      course
+      lecture
     })
   } catch (error) {
     next(error)
@@ -159,21 +162,20 @@ exports.delete = async function (req, res, next) {
     })
 
     /** Delete */
-    const course = await Course.find(
+    const lecture = await Lecture.find(
       {
         _id: ids
       },
       null
     )
-    // console.log(vendor);
-    if (course.length <= 0) {
+    if (lecture.length <= 0) {
       return res.send({
         status: 204,
         message: 'No Data found!'
       })
     }
 
-    course.forEach((doc) => {
+    lecture.forEach((doc) => {
       /** Delete File */
       doc.delete()
     })

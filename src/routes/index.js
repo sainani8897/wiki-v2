@@ -20,6 +20,8 @@ const invoice = require('./invoice')
 const dashboard = require('./dashboard')
 const organization = require('./organization')
 const course = require('./course')
+const sections = require('./sections')
+const lectures = require('./lectures')
 /** Home Route */
 Routes.get('/', function (req, res) {
   res.send('Home api page')
@@ -84,5 +86,11 @@ Routes.use('/organization', authenticateToken, organization)
 
 /* Course Controller */
 Routes.use('/course', authenticateToken, course)
+
+/* Sections Controller */
+Routes.use('/sections', authenticateToken, sections)
+
+/* Lecture Controller */
+Routes.use('/lectures', authenticateToken, lectures)
 
 module.exports = Routes

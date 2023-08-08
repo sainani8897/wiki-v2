@@ -1,6 +1,17 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
 
+/* Questions Object */
+const QuestionSchema = new mongoose.Schema({
+  question: String,
+  question_type: String,
+  points: {
+    type: Number,
+    default: 1
+  },
+  answers: [String]
+})
+
 const sectionSchema = new mongoose.Schema(
   {
     title: {
@@ -59,6 +70,9 @@ const sectionSchema = new mongoose.Schema(
     instructor_notes: {
       type: String
     },
+    question_content: [{
+      type: QuestionSchema
+    }],
     docs: [
       {
         type: mongoose.Schema.Types.ObjectId,

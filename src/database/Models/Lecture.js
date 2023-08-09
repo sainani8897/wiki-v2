@@ -9,7 +9,21 @@ const QuestionSchema = new mongoose.Schema({
     type: Number,
     default: 1
   },
-  answers: [String]
+  answers: [
+    {
+      ans: String,
+      mark_as_correct: Boolean
+    }
+  ],
+  settings: {
+    full_points: Number,
+    pass_points: Number,
+    duration: Number,
+    attempts_allowed: String,
+    time_limit: Boolean,
+    time_limit_per_question: Number, // Give in seconds
+    no_of_attempts: Number
+  }
 })
 
 const sectionSchema = new mongoose.Schema(
@@ -75,9 +89,11 @@ const sectionSchema = new mongoose.Schema(
     instructor_notes: {
       type: String
     },
-    question_content: [{
-      type: QuestionSchema
-    }],
+    quiz_content: [
+      {
+        type: QuestionSchema
+      }
+    ],
     docs: [
       {
         type: mongoose.Schema.Types.ObjectId,

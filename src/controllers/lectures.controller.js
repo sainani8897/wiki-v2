@@ -76,6 +76,7 @@ exports.create = async function (req, res, next) {
       section: payload.section,
       content_type: payload.content_type,
       content: payload.content,
+      quiz_content: payload.quiz_content,
       created_by: req.user._id,
       org_id: req.user.org_id
     })

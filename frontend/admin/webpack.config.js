@@ -3,6 +3,14 @@ const path = require('path');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlwebpackPlugin = require('html-webpack-plugin');
+var webpack = require('webpack');
+
+const ENV_VARIABLES = Object.freeze({
+    API_URL: 'http://localhost:4040/api/v1',
+    LOGIN_HOST_NAME: 'http://localhost:8000',
+    SSL: 'false',
+    NODE_ENV: 'development',
+});
 
 module.exports = {
   entry: './src/index.tsx',
@@ -75,6 +83,10 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
-    })
+    }),
+    new webpack.DefinePlugin({
+      __DEV__: true,
+      'process.env': JSON.stringify(ENV_VARIABLES),
+  }),
   ]
 };

@@ -21,12 +21,21 @@ import FormWizardPage from './pages/forms/wizard';
 import CalendarPage from './pages/calendar';
 import { appNavs } from './config';
 import Users from './pages/users';
+import dotenv from 'dotenv';
 
 const App = () => {
+  // dotenv.config();
   return (
     <IntlProvider locale="en" messages={locales.en}>
       <CustomProvider locale={enGB}>
         <Routes>
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="error-404" element={<Error404Page />} />
+          <Route path="error-403" element={<Error403Page />} />
+          <Route path="error-500" element={<Error500Page />} />
+          <Route path="error-503" element={<Error503Page />} />
+          {/* Auth Files */}
           <Route path="/" element={<Frame navs={appNavs} />}>
             <Route index element={<DashboardPage />} />
             <Route path="dashboard" element={<DashboardPage />} />
@@ -34,10 +43,6 @@ const App = () => {
             <Route path="table-virtualized" element={<VirtualizedTablePage />} />
             <Route path="categories" element={<Categories />} />
             <Route path="users" element={<Users />} />
-            <Route path="error-404" element={<Error404Page />} />
-            <Route path="error-403" element={<Error403Page />} />
-            <Route path="error-500" element={<Error500Page />} />
-            <Route path="error-503" element={<Error503Page />} />
             <Route path="sign-in" element={<SignInPage />} />
             <Route path="sign-up" element={<SignUpPage />} />
             <Route path="form-basic" element={<FormBasicPage />} />

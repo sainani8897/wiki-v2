@@ -8,15 +8,20 @@ import {
   InputNumber,
   InputGroup,
   Slider,
-  Rate
+  Rate,
+  SelectPicker
 } from 'rsuite';
 
 const DrawerView = (props: DrawerProps) => {
   const { onClose, ...rest } = props;
+  const selectData = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice'].map(item => ({
+    label: item,
+    value: item
+  }));
   return (
     <Drawer backdrop="static" size="sm" placement="right" onClose={onClose} {...rest}>
       <Drawer.Header>
-        <Drawer.Title>Add a new member</Drawer.Title>
+        <Drawer.Title>Add a Category</Drawer.Title>
         <Drawer.Actions>
           <Button onClick={onClose} appearance="primary">
             Confirm
@@ -29,46 +34,22 @@ const DrawerView = (props: DrawerProps) => {
 
       <Drawer.Body>
         <Form fluid>
-          <Stack justifyContent="space-between" style={{ marginBottom: 20 }}>
-            <Form.Group>
-              <Form.ControlLabel>First Name</Form.ControlLabel>
-              <Form.Control name="firstname" style={{ width: 200 }} />
-            </Form.Group>
-            <Form.Group>
-              <Form.ControlLabel>Last Name</Form.ControlLabel>
-              <Form.Control name="lastname" style={{ width: 200 }} />
-            </Form.Group>
-          </Stack>
           <Form.Group>
-            <Form.ControlLabel>Email</Form.ControlLabel>
-            <Form.Control name="email" type="email" />
+            <Form.ControlLabel>Category</Form.ControlLabel>
+            <Form.Control name="category"/>
           </Form.Group>
           <Form.Group>
-            <Form.ControlLabel>City</Form.ControlLabel>
-            <Form.Control name="city" />
+            <Form.ControlLabel>Slug</Form.ControlLabel>
+            <Form.Control name="city" readOnly />
           </Form.Group>
           <Form.Group>
-            <Form.ControlLabel>Street</Form.ControlLabel>
-            <Form.Control name="street" />
+            <Form.ControlLabel>Sort Order</Form.ControlLabel>
+            <Form.Control name="sort_order" accepter={InputNumber} style={{ width: '100%' }}  />
           </Form.Group>
-
-          <Form.Group>
-            <Form.ControlLabel>Rating</Form.ControlLabel>
-            <Form.Control name="rating" accepter={Rate} />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.ControlLabel>Skill Proficiency</Form.ControlLabel>
-            <Form.Control name="skill" accepter={Slider} progress />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.ControlLabel>Income</Form.ControlLabel>
-            <InputGroup style={{ width: '100%' }}>
-              <InputGroup.Addon>$</InputGroup.Addon>
-              <Form.Control name="income" accepter={InputNumber} style={{ width: '100%' }} />
-            </InputGroup>
-          </Form.Group>
+          <Form.Group controlId="selectPicker">
+          <Form.ControlLabel>Parent Category</Form.ControlLabel>
+          <Form.Control name="parent" accepter={SelectPicker} style={{ width: '100%' }} data={selectData} />
+        </Form.Group>
         </Form>
       </Drawer.Body>
     </Drawer>

@@ -26,19 +26,24 @@ export const appNavs = [
     to: '/categories'
   },
   {
-    eventKey: 'Users',
+    eventKey: 'Users Management',
     icon: <Icon as={PeoplesIcon} />,
-    title: 'Users',
+    title: 'Users Management',
     to: '/users',
     children: [
       {
-        eventKey: 'members',
-        title: 'Members',
+        eventKey: 'users',
+        title: 'Users',
         to: '/table-members'
       },
       {
-        eventKey: 'virtualized',
-        title: 'Virtualized Table',
+        eventKey: 'students',
+        title: 'Students',
+        to: '/table-virtualized'
+      },
+      {
+        eventKey: 'Instructors',
+        title: 'Instructors',
         to: '/table-virtualized'
       }
     ]

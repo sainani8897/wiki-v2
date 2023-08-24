@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Input,
   InputGroup,
@@ -16,7 +16,6 @@ import MoreIcon from '@rsuite/icons/legacy/More';
 import DrawerView from './DrawerView';
 import { mockUsers } from '@/data/mock';
 import { NameCell, ImageCell, CheckCell, ActionCell } from './Cells';
-import axiosInstance from '../../interceptors/axios';
 
 // const data = mockUsers(20);
 const defaultData = mockUsers(1000);
@@ -43,7 +42,6 @@ const DataTable = () => {
   const [rating, setRating] = useState<number | null>(null);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
-  const [categories,setCategories] = useState([]);
 
   const handleChangeLimit = dataKey => {
     setPage(1);
@@ -117,23 +115,13 @@ const DataTable = () => {
     return filtered;
   };
 
-  useEffect(() => {
-    axiosInstance.get('/categories')
-      .then(response => {
-        setCategories(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, []);
-
 
 
   return (
     <>
       <Stack className="table-toolbar" justifyContent="space-between">
         <Button appearance="primary" onClick={() => setShowDrawer(true)}>
-          Add Category
+          Add Member
         </Button>
 
         <Stack spacing={6}>

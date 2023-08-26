@@ -13,53 +13,57 @@ const { required_with } = require("validatorjs/src/lang/en");
 const { pluck } = require("../helpers/helperFunctions");
 
 exports.login = async function (req, res, next) {
-  const user = await User.findByLogin(req.body);
-  let permissionsArray = [];
-  let permissions = [];
+  try {
+    const user = await User.findByLogin(req.body);
+    let permissionsArray = [];
+    let permissions = [];
 
-  const token = jwt.sign({ data: user._id }, process.env.APP_KEY, {
-    expiresIn: "5d",
-  });
+    const token = jwt.sign({ data: user._id }, process.env.APP_KEY, {
+      expiresIn: "5d",
+    });
 
-  if (user.roles && Array.isArray(user.roles)) {
-    let arr = [];
-    user?.roles?.forEach((role) => {
-      permissionsArray = arr.concat(role.permissions);
+    if (user.roles && Array.isArray(user.roles)) {
+      let arr = [];
+      user?.roles?.forEach((role) => {
+        permissionsArray = arr.concat(role.permissions);
+      });
+      console.log(permissionsArray);
+      const allPermissionsTemp = await Permission.find({
+        _id: permissionsArray,
+      });
+      permissions = pluck(allPermissionsTemp, "name");
+    }
+
+    const refresh_token = crypto
+      .createHash("sha256", process.env.API_KEY)
+      .update(token)
+      .digest("hex");
+    user.refresh_token = refresh_token;
+
+    const personal_token = PersonalAccessTokens.create({
+      token,
+      refresh_token,
+      user: user._id,
+    }).then((data) => {
+      user.tokens.push(data);
+      user.save();
     });
-    console.log(permissionsArray);
-    const allPermissionsTemp = await Permission.find({
-      _id: permissionsArray,
+
+    user.permissions = permissions;
+
+    const customUser = user;
+
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      permissions,
+      token,
+      user,
     });
-    permissions = pluck(allPermissionsTemp, "name");
+  } catch (error) {
+    next(error);
   }
-
-  const refresh_token = crypto
-    .createHash("sha256", process.env.API_KEY)
-    .update(token)
-    .digest("hex");
-  user.refresh_token = refresh_token;
-
-  const personal_token = PersonalAccessTokens.create({
-    token,
-    refresh_token,
-    user: user._id,
-  }).then((data) => {
-    user.tokens.push(data);
-    user.save();
-  });
-
-  user.permissions = permissions;
-
-  const customUser = user;
-
-  res.status(200).json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    permissions,
-    token,
-    user,
-  });
 };
 
 exports.register = async function (req, res, next) {
@@ -167,16 +171,14 @@ exports.refreshToken = async function (req, res, next) {
       user.save();
     });
 
-    return res
-      .status(200)
-      .json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token,
-        permissions,
-        user,
-      });
+    return res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token,
+      permissions,
+      user,
+    });
   } catch (error) {
     next(error);
   }

@@ -7,11 +7,13 @@ services:
     image: mongo
     ports:
       - "27018:27017"
+    volumes:
+      - mongodb-data:/data/db
   
   redis:
     image: redis
     ports:
-      - 6379:6379
+      - "6379:6379"
 
   api:
     image: wiki/apis
@@ -20,3 +22,6 @@ services:
     build: ./services
     ports:
     - "4040:4040"
+
+volumes:
+  mongodb-data:

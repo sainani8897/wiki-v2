@@ -25,6 +25,7 @@ import TrashIcon from '@rsuite/icons/Trash';
 import DrawerView from './DrawerView';
 import { mockUsers } from '@/data/mock';
 import { NameCell, ImageCell, CheckCell, ActionCell } from './Cells';
+import  DeleteModal from './DeleteModal';
 import axiosInstance from '../../interceptors/axios';
 
 
@@ -41,7 +42,9 @@ const ratingList = [
 
 const DataTable = () => {
   const [showDrawer, setShowDrawer] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState<number[]>([]);
+  const [deleteId, setdeleteId] = useState('');
   const [sortColumn, setSortColumn] = useState();
   const [sortType, setSortType] = useState();
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -50,6 +53,7 @@ const DataTable = () => {
   const [page, setPage] = useState(1);
   const [categories, setCategories] = useState<any>({});
   const [categoryData, setCategoryData] = useState<any>({});
+  
   // const data = mockUsers(20);
   const defaultData: any = categories;
 
@@ -155,6 +159,16 @@ const DataTable = () => {
       });
   }
 
+  const deleteModal = (id:string) => {
+    setdeleteId(id);
+    setShowDeleteModal(true);
+  }
+
+  const reloadComponent = () =>{
+    alert(1);
+    getCategories();
+  }
+
   return (
     <>
       <Stack className="table-toolbar" justifyContent="space-between">
@@ -191,7 +205,7 @@ const DataTable = () => {
         <Column width={50} align="center" fixed>
           <HeaderCell>Id</HeaderCell>
           <Cell dataKey="index">
-            {(rowData, index) => index + 1}
+            {(rowData, index:number) => index + 1}
           </Cell>
         </Column>
 
@@ -231,7 +245,9 @@ const DataTable = () => {
             {
               rowData => (<ButtonToolbar>
                 <IconButton size="sm" color="blue" onClick={()=>{ onEdit(rowData) }} appearance="ghost" circle icon={<EditIcon />} />
-                <IconButton size="sm" color="red" appearance="ghost" circle icon={<TrashIcon />} />
+                <IconButton size="sm" onClick={()=>{
+                  deleteModal(rowData._id)
+                }} color="red" appearance="ghost" circle icon={<TrashIcon />} />
               </ButtonToolbar>)
             }
 
@@ -257,7 +273,10 @@ const DataTable = () => {
           onChangeLimit={handleChangeLimit}
         />
       </div>
-      <DrawerView open={showDrawer} customData={{ categories, categoryData }} onClose={() => setShowDrawer(false)} />
+      <DrawerView open={showDrawer} customData={{ categories, categoryData }} onClose={() => setShowDrawer(false)} reload={()=>reloadComponent()}/>
+      
+      {/* Delete Modal */}
+      <DeleteModal open={showDeleteModal} deleteId={deleteId} onClose={() => setShowDeleteModal(false)} reload={()=>reloadComponent()} />
     </>
   );
 };

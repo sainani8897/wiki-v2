@@ -20,7 +20,7 @@ import { slugify } from '@/utils';
 import axiosInstance from '../../interceptors/axios';
 
 const DrawerView = (props: DrawerProps) => {
-  const { onClose, customData, ...rest } = props;
+  const { onClose, customData,reload, ...rest } = props;
   const categories = customData?.categories;
   const category = customData?.categoryData;
 
@@ -54,7 +54,9 @@ const DrawerView = (props: DrawerProps) => {
   const create = () => {
     axiosInstance.post('/categories', { payload: formValue })
       .then(response => {
+        setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
+        reload()
 
       })
       .catch(error => {

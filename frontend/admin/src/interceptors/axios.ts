@@ -5,7 +5,7 @@ const instance = axios.create();
 // Request interceptor
 instance.interceptors.request.use(
     config => {
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjRlOTYzYTJkODUxNDIxY2JlNTc5ZmFkIiwiaWF0IjoxNjkzMDE3MDAwLCJleHAiOjE2OTM0NDkwMDB9.yaTZcz39Oh2Uwx-G87rroY3sfCLk---nZyMC0kmiphA';//localStorageService.get('access_token');
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjRmMWExNWZiZjNkZTBkYTgxYTdhODA4IiwiaWF0IjoxNjk0Mjg0NTA2LCJleHAiOjE2OTQ3MTY1MDZ9.gaB9M1Qsx2aAd04laAIYEfma5m2VVP-kYf3iEKJM96E';//localStorageService.get('access_token');
         if (token) {
           config.headers['Authorization'] = 'Bearer ' + token
         }

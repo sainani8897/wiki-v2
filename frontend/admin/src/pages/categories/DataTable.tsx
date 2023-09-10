@@ -175,6 +175,8 @@ const DataTable = () => {
   const add = () => {
     setAction('create')
     setShowDrawer(true)
+    setCategoryData({})
+    setActionId('')
   }
 
   return (

@@ -1,20 +1,14 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,SyntheticEvent} from 'react';
 import {
   Drawer,
   DrawerProps,
   Button,
   Form,
-  Stack,
   InputNumber,
-  InputGroup,
-  Slider,
-  Rate,
   SelectPicker,
   Schema,
   toaster,
   Message,
-  Popover,
-  Dropdown
 } from 'rsuite';
 import { slugify } from '@/utils';
 import axiosInstance from '../../interceptors/axios';
@@ -23,7 +17,6 @@ const DrawerView = (props: DrawerProps) => {
   const { onClose, customData,action,reload, ...rest } = props;
   const categories = customData?.categories;
   const category = customData?.categoryData;
-
 
   /* Schema for validation */
   const model = Schema.Model({
@@ -47,46 +40,51 @@ const DrawerView = (props: DrawerProps) => {
     setFormValue(formValue);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
     if(action === 'edit'){
-      update()
+      update(e)
     }
-    create;
+    create(e);
   };
 
-  const create = () => {
+  const create = (event:SyntheticEvent) => {
     axiosInstance.post('/categories', { payload: formValue })
       .then(response => {
+        onClose?.(event);
         setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
         reload()
-
       })
       .catch(error => {
-        toaster.push(<Message type="error">Oops! Something went wrong</Message>);
+        const error_msg  = error?.response?.data?.message ?? "Oops Something went wrong";
+        toaster.push(<Message type="error">{error_msg}</Message>);
       });
   };
 
-  const update = () => {
+
+  const update = (event:SyntheticEvent) => {
     axiosInstance.patch('/categories', { payload: formValue })
       .then(response => {
+        onClose?.(event);
         setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
         reload()
       })
       .catch(error => {
-        toaster.push(<Message type="error">Oops! Something went wrong</Message>);
+        const error_msg  = error?.response?.data?.message ?? "Oops Something went wrong";
+        toaster.push(<Message type="error">{error_msg}</Message>);
       });
   };
 
   useEffect(() => {
+    console.log("customData:",customData)
     setFormValue({
-      category_name:category.category_name,
-      slug:category.slug,
-      status:category.status,
-      sort:category.sort,
-      parent_id:category?.parent_id?._id,
-      _id:category?._id
+      category_name:category.category_name ?? '',
+      slug:category.slug ?? '',
+      status:category.status ?? '',
+      sort:category.sort ?? '',
+      parent_id:category?.parent_id?._id ?? '',
+      _id:category?._id ?? ''
     })
   }, [customData]);
 
@@ -95,7 +93,7 @@ const DrawerView = (props: DrawerProps) => {
     <Drawer backdrop="static" size="sm" placement="right" onClose={onClose} {...rest}>
       <Form fluid model={model} formValue={formValue} onChange={setFormValue} onSubmit={handleSubmit}
         onCheck={setFormError}>
-          
+
         <Drawer.Header>
           <Drawer.Title>{action == 'create' ? "Add" : 'Edit' } a Category</Drawer.Title>
           <Drawer.Actions>

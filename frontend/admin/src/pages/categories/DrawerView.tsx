@@ -20,7 +20,7 @@ import { slugify } from '@/utils';
 import axiosInstance from '../../interceptors/axios';
 
 const DrawerView = (props: DrawerProps) => {
-  const { onClose, customData,reload, ...rest } = props;
+  const { onClose, customData,action,reload, ...rest } = props;
   const categories = customData?.categories;
   const category = customData?.categoryData;
 
@@ -48,7 +48,10 @@ const DrawerView = (props: DrawerProps) => {
   }
 
   const handleSubmit = () => {
-    create()
+    if(action === 'edit'){
+      update()
+    }
+    create;
   };
 
   const create = () => {
@@ -64,6 +67,17 @@ const DrawerView = (props: DrawerProps) => {
       });
   };
 
+  const update = () => {
+    axiosInstance.patch('/categories', { payload: formValue })
+      .then(response => {
+        setFormValue({});
+        toaster.push(<Message type="success">{response.data.message}</Message>);
+        reload()
+      })
+      .catch(error => {
+        toaster.push(<Message type="error">Oops! Something went wrong</Message>);
+      });
+  };
 
   useEffect(() => {
     setFormValue({
@@ -71,7 +85,8 @@ const DrawerView = (props: DrawerProps) => {
       slug:category.slug,
       status:category.status,
       sort:category.sort,
-      parent_id:category?.parent_id?._id
+      parent_id:category?.parent_id?._id,
+      _id:category?._id
     })
   }, [customData]);
 
@@ -82,7 +97,7 @@ const DrawerView = (props: DrawerProps) => {
         onCheck={setFormError}>
 
         <Drawer.Header>
-          <Drawer.Title>Add a Category</Drawer.Title>
+          <Drawer.Title>{action == 'create' ? "Add" : 'Edit' } a Category</Drawer.Title>
           <Drawer.Actions>
             <Button appearance="primary" type="submit">
               Confirm
@@ -111,7 +126,7 @@ const DrawerView = (props: DrawerProps) => {
             <Form.Control name="parent_id" accepter={SelectPicker} style={{ width: '100%' }} data={selectData} />
           </Form.Group>
           <Form.Group controlId="selectPicker">
-            <Form.ControlLabel>Parent Category</Form.ControlLabel>
+            <Form.ControlLabel>Status</Form.ControlLabel>
             <Form.Control name="status" accepter={SelectPicker} style={{ width: '100%' }} data={[
               {
                 label: 'Active',

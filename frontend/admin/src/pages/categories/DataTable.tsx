@@ -45,6 +45,8 @@ const DataTable = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState<number[]>([]);
   const [deleteId, setdeleteId] = useState('');
+  const [actionId, setActionId] = useState('');
+  const [action, setAction] = useState('create');
   const [sortColumn, setSortColumn] = useState();
   const [sortType, setSortType] = useState();
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -95,6 +97,8 @@ const DataTable = () => {
 
   const onEdit = (data: any) => {
     setCategoryData(data);
+    setAction('edit');
+    setActionId(data._id)
     setShowDrawer(true);
     console.log("Edit data::",data);
   }
@@ -165,7 +169,6 @@ const DataTable = () => {
   }
 
   const reloadComponent = () =>{
-    alert(1);
     getCategories();
   }
 
@@ -273,7 +276,7 @@ const DataTable = () => {
           onChangeLimit={handleChangeLimit}
         />
       </div>
-      <DrawerView open={showDrawer} customData={{ categories, categoryData }} onClose={() => setShowDrawer(false)} reload={()=>reloadComponent()}/>
+      <DrawerView open={showDrawer} action={action} customData={{ categories, categoryData, actionId }} onClose={() => setShowDrawer(false)} reload={()=>reloadComponent()}/>
       
       {/* Delete Modal */}
       <DeleteModal open={showDeleteModal} deleteId={deleteId} onClose={() => setShowDeleteModal(false)} reload={()=>reloadComponent()} />

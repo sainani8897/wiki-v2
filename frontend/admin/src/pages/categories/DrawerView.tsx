@@ -95,7 +95,7 @@ const DrawerView = (props: DrawerProps) => {
     <Drawer backdrop="static" size="sm" placement="right" onClose={onClose} {...rest}>
       <Form fluid model={model} formValue={formValue} onChange={setFormValue} onSubmit={handleSubmit}
         onCheck={setFormError}>
-
+          
         <Drawer.Header>
           <Drawer.Title>{action == 'create' ? "Add" : 'Edit' } a Category</Drawer.Title>
           <Drawer.Actions>

@@ -172,10 +172,15 @@ const DataTable = () => {
     getCategories();
   }
 
+  const add = () => {
+    setAction('create')
+    setShowDrawer(true)
+  }
+
   return (
     <>
       <Stack className="table-toolbar" justifyContent="space-between">
-        <Button appearance="primary" onClick={() => setShowDrawer(true)}>
+        <Button appearance="primary" onClick={() => add()}>
           Add Category
         </Button>
 

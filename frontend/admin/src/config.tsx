@@ -48,6 +48,24 @@ export const appNavs = [
       }
     ]
   },
+  {
+    eventKey: 'Roles Management',
+    icon: <Icon as={PeoplesIcon} />,
+    title: 'Roles Management',
+    to: '/roles',
+    children: [
+      {
+        eventKey: 'Roles',
+        title: 'Roles',
+        to: '/roles',
+      },
+      {
+        eventKey: 'Permissions',
+        title: 'Permissions',
+        to: '/permissions',
+      },
+    ]
+  },
   // {
   //   eventKey: 'tables',
   //   icon: <Icon as={VscTable} />,

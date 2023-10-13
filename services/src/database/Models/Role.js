@@ -22,6 +22,10 @@ const rolesSchema = new mongoose.Schema(
       type:String,
       required:true
     },
+    status: {
+      type: String,
+      default:"Active"
+    },
     org_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",

@@ -70,7 +70,8 @@ exports.create = async function (req, res, next) {
       name: payload.name,
       display_text:payload.display_text,
       created_by: req.user._id,
-      org_id: req.user.org_id
+      org_id: req.user.org_id,
+      status: payload.status ?? 'Active'
     });
 
     if(payload.name === 'super_admin')
@@ -131,7 +132,8 @@ exports.update = async function (req, res, next) {
       name: payload.name,
       display_text:payload.display_text,
       created_by: req.user._id,
-      org_id: req.user.org_id
+      org_id: req.user.org_id,
+      status: payload.status ?? 'Active'
     });
 
     /** Delete  */

@@ -16,6 +16,8 @@ import SignUpPage from './pages/authentication/sign-up';
 import MembersPage from './pages/tables/members';
 import VirtualizedTablePage from './pages/tables/virtualized';
 import Categories from './pages/categories';
+import Roles from './pages/roles';
+import Permissions from './pages/permissions';
 import FormBasicPage from './pages/forms/basic';
 import FormWizardPage from './pages/forms/wizard';
 import CalendarPage from './pages/calendar';
@@ -42,6 +44,8 @@ const App = () => {
             <Route path="table-members" element={<MembersPage />} />
             <Route path="table-virtualized" element={<VirtualizedTablePage />} />
             <Route path="categories" element={<Categories />} />
+            <Route path="roles" element={<Roles />} />
+            <Route path="permissions" element={<Permissions />} />
             <Route path="users" element={<Users />} />
             <Route path="sign-in" element={<SignInPage />} />
             <Route path="sign-up" element={<SignUpPage />} />

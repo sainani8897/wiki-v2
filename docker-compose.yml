@@ -26,15 +26,15 @@ services:
     ports:
       - "4040:4040"
       
-  admin:
-    image: wiki/admin
-    hostname: admin
-    restart: on-failure
-    build: ./frontend/admin
-    depends_on:
-      - mongo
-    ports:
-      - 8100:8100
+  # admin:
+  #   image: wiki/admin
+  #   hostname: admin
+  #   restart: on-failure
+  #   build: ./frontend/admin
+  #   depends_on:
+  #     - mongo
+  #   ports:
+  #     - 8100:8100
   
 
 

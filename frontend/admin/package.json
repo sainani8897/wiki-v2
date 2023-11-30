@@ -7,9 +7,9 @@
     "lib": "lib/"
   },
   "scripts": {
-    "dev": "webpack serve --mode development --port 3100 --host localhost --progress ",
+    "dev": "webpack serve --mode development --port 3000 --host 0.0.0.0 --progress ",
     "clear": "rm -rf assets",
-    "build:webpack": "NODE_ENV=production  webpack --mode production --progress && cp -R public/* ./assets/ ",
+    "build:webpack": "SET NODE_ENV=production  webpack --mode production --progress && cp -R public/* ./assets/ ",
     "build": "npm run clear && npm run build:webpack",
     "publish:gh-pages": "node gh-pages.js"
   },

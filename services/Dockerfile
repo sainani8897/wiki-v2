@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:14
+FROM node:16
 
 # Set environment variables
 ENV NODE_ENV=development
@@ -17,15 +17,18 @@ ENV DB_PORT=27017
 ENV DB_DATABASE=wikiskillz
 ENV DB_USERNAME=
 ENV DB_PASSWORD=
+ENV REDIS_HOST=redis
+ENV REDIS_PASSWORD=null
+ENV REDIS_PORT=6379
 
 # Create and set the working directory
 WORKDIR /var/app
 
 # Copy package.json and package-lock.json to the container
-COPY package*.json ./
+COPY package*.json yarn.lock ./
 
 # Install Node.js dependencies
-RUN npm install
+RUN yarn install
 
 # Copy the rest of the application files to the container
 COPY ./ ./

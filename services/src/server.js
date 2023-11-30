@@ -5,11 +5,11 @@ const routes = require('./routes')
 const { connectDb } = require('./config/database')
 const cors = require('cors')
 const path = require('path')
-const { main } = require('./schedulars')
+// const { main } = require('./schedulars')
 
 /** CROS */
 app.use(cors({
-  origin: ['http://localhost:7000','http://localhost:3100'],
+  origin: ['http://localhost:7000', 'http://localhost:3100'],
   credentials: true, // access-control-allow-credentials:true
   optionSuccessStatus: 200
 }))
@@ -25,9 +25,9 @@ app.use('/public', express.static(path.join(__dirname, 'public')))
 app.use('/api/v1', routes)
 
 /** Initializing the schedulers */
-main().then(() => {
-  console.log('Redis Schedular!')
-})
+// main().then(() => {
+//   console.log('Redis Schedular!')
+// })
 
 /** global error handler */
 app.use(function (err, req, res, next) {

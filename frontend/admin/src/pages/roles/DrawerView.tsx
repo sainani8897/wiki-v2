@@ -9,7 +9,8 @@ import {
   Schema,
   toaster,
   Message,
-  CheckPicker
+  CheckPicker,
+  CheckTreePicker 
 } from 'rsuite';
 import { slugify } from '@/utils';
 import axiosInstance from '../../interceptors/axios';
@@ -17,7 +18,7 @@ import axiosInstance from '../../interceptors/axios';
 const DrawerView = (props: DrawerProps) => {
   const { onClose, customData, action, reload, ...rest } = props;
   const permissions = customData?.permissions;
-  const category = customData?.categoryData;
+  const role = customData?.roleData;
 
   /* Schema for validation */
   const model = Schema.Model({
@@ -81,9 +82,9 @@ const DrawerView = (props: DrawerProps) => {
   useEffect(() => {
     console.log("customData:", customData)
     setFormValue({
-      // category_name:category.category_name ?? '',
-      // slug:category.slug ?? '',
-      // status:category.status ?? '',
+      display_text:role.display_text ?? '',
+      name:role.name ?? '',
+      status:role.status ?? '',
       // sort:category.sort ?? '',
       // parent_id:category?.parent_id?._id ?? '',
       // _id:category?._id ?? ''
@@ -144,8 +145,8 @@ const DrawerView = (props: DrawerProps) => {
                 formData.permissions = value
                 setFormValue(formData);
                 console.log(formValue)
-
-              }} data={selectData} groupBy="role" style={{ width: '100%' }} />
+              }} data={selectData} renderValue={(formValue)=>{}}
+              groupBy="role" style={{ width: '100%' }} />
             </Form.Group>
             <Form.Group controlId="selectPicker">
               <Form.ControlLabel>Status</Form.ControlLabel>

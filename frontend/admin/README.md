@@ -23,7 +23,7 @@ npm install
 
 Now you can start the development server by running npm run dev
 
-It's serving at http://127.0.0.1:3100/ by default.
+It's serving at http://127.0.0.1:3100 by default.
 
 ```
 npm run dev

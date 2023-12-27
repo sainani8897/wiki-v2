@@ -55,6 +55,7 @@ exports.login = async function (req, res, next) {
       email: user.email,
       permissions,
       token,
+      refresh_token,
       user
     })
   } catch (error) {

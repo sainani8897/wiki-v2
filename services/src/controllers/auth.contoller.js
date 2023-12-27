@@ -40,7 +40,7 @@ exports.login = async function (req, res, next) {
       .digest('hex')
     user.refresh_token = refresh_token
 
-    const personal_token = PersonalAccessTokens.create({
+    PersonalAccessTokens.create({
       token,
       refresh_token,
       user: user._id
@@ -48,11 +48,7 @@ exports.login = async function (req, res, next) {
       user.tokens.push(data)
       user.save()
     })
-
     user.permissions = permissions
-
-    const customUser = user
-
     res.status(200).json({
       _id: user._id,
       name: user.name,
@@ -93,7 +89,7 @@ exports.register = async function (req, res, next) {
     })
     user.token = token
     user.org_id = organization._id
-    const personal_token = await PersonalAccessTokens.create({
+    await PersonalAccessTokens.create({
       token,
       user: user._id
     })
@@ -132,9 +128,7 @@ exports.refreshToken = async function (req, res, next) {
         .json({ status: 400, message: 'Refresh token not given!' })
     }
 
-    const user = await User.findOne({ refresh_token }).populate(
-      'roles'
-    )
+    const user = await User.findOne({ refresh_token }).populate('roles')
 
     if (!user) {
       return res.status(401).json({
@@ -164,7 +158,7 @@ exports.refreshToken = async function (req, res, next) {
       .digest('hex')
     user.refresh_token = new_refresh_token
 
-    const personal_token = await PersonalAccessTokens.find({
+    await PersonalAccessTokens.find({
       token,
       refresh_token,
       user: user._id

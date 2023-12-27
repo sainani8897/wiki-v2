@@ -9,7 +9,7 @@ const path = require('path')
 
 /** CROS */
 app.use(cors({
-  origin: ['http://localhost:7000', 'http://localhost:3100'],
+  origin: ['http://localhost:7000', 'http://localhost:3100', 'http://localhost:3000'],
   credentials: true, // access-control-allow-credentials:true
   optionSuccessStatus: 200
 }))

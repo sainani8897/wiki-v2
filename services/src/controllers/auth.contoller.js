@@ -153,11 +153,11 @@ exports.refreshToken = async function (req, res, next) {
       expiresIn: '5d'
     })
 
-    const new_refresh_token = crypto
-      .createHash('sha256', process.env.API_KEY)
-      .update(token)
-      .digest('hex')
-    user.refresh_token = new_refresh_token
+    // const new_refresh_token = crypto
+    //   .createHash('sha256', process.env.API_KEY)
+    //   .update(token)
+    //   .digest('hex')
+    // user.refresh_token = new_refresh_token
 
     await PersonalAccessTokens.find({
       token,

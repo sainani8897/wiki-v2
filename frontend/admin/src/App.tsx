@@ -31,7 +31,7 @@ const App = () => {
     <IntlProvider locale="en" messages={locales.en}>
       <CustomProvider locale={enGB}>
         <Routes>
-          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/login" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="error-404" element={<Error404Page />} />
           <Route path="error-403" element={<Error403Page />} />
@@ -47,8 +47,8 @@ const App = () => {
             <Route path="roles" element={<Roles />} />
             <Route path="permissions" element={<Permissions />} />
             <Route path="users" element={<Users />} />
-            <Route path="sign-in" element={<SignInPage />} />
-            <Route path="sign-up" element={<SignUpPage />} />
+            {/* <Route path="sign-in" element={<SignInPage />} />
+            <Route path="sign-up" element={<SignUpPage />} /> */}
             <Route path="form-basic" element={<FormBasicPage />} />
             <Route path="form-wizard" element={<FormWizardPage />} />
             <Route path="calendar" element={<CalendarPage />} />

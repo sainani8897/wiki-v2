@@ -5,15 +5,15 @@ const instance = axios.create();
 // Request interceptor
 instance.interceptors.request.use(
     config => {
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjUzYWEzYmNkYjZiNTdhMGNkOGFhYWU3IiwiaWF0IjoxNjk4MzQxODM4LCJleHAiOjE2OTg3NzM4Mzh9.zN6VhGOUz689xsJRAcA9CwFO8XL73gNHGE0-NZz7IJw';//localStorageService.get('access_token');
+        const token = localStorageService.get('token');
         if (token) {
-          config.headers['Authorization'] = 'Bearer ' + token
+          config.headers.Authorization = 'Bearer ' + token;
         }
         config.headers['Content-Type'] = 'application/json';
-        return {...config,baseURL: process.env.API_URL,}
+        return {...config,baseURL: process.env.API_URL,};
       },
       error => {
-        Promise.reject(error)
+        Promise.reject(error);
       }
 );
 
@@ -26,36 +26,35 @@ instance.interceptors.response.use(
   },
   error => {
     // Handle response error
-    const originalRequest = error.config
+    const originalRequest = error.config;
 
     if (
       error?.response?.status === 401 &&
-      originalRequest.url === process.env.API_URL+'/refresh'
+      originalRequest.url === process.env.API_URL + '/refresh'
     ) {
-      //router.push('/login')
-      return Promise.reject(error)
+      // router.push('/login')
+      return Promise.reject(error);
     }
 
     if (error?.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-      //const refreshToken = localStorageService.getRefreshToken()
-      const refreshToken = localStorageService.get('refresh_token')
+      originalRequest._retry = true;
+      const refreshToken = localStorageService.get('refresh_token');
       return axios
-        .post(process.env.API_URL+'/refresh', {
+        .post(process.env.API_URL + '/refresh', {
           refresh_token: refreshToken ?? ''
         })
         .then(res => {
           if (res.status === 200) {
-            localStorageService.set('access_token', res.data.access_token)
-            axios.defaults.headers.common['Authorization'] =
-              'Bearer ' + localStorageService.get('token')
-            return axios(originalRequest)
+            localStorageService.set('token', res.data.token);
+            axios.defaults.headers.common.Authorization =
+              'Bearer ' + localStorageService.get('token');
+            return axios(originalRequest);
           }
         }).catch(err => {
-          console.error(err)
+          console.error(err);
         });
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 );
 

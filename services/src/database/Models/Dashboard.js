@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
 const { Vendor, User } = require('./index')
 const Category = require('./Category')
-const Customer = require('./Customer')
+const Student = require('./Student')
 const Invoice = require('./Invoice')
 const SalesItemsHistory = require('./SalesItemsHistory')
 const SalesOrder = require('./SalesOrder')
@@ -57,7 +57,7 @@ dashboardSchema.statics.saveOrgData = async function (org_id) {
 
     Category.countDocuments({ org_id }).exec(),
     SalesOrder.countDocuments({ org_id }).exec(),
-    Customer.countDocuments({ org_id }).exec(),
+    Student.countDocuments({ org_id }).exec(),
     Vendor.countDocuments({ org_id }).exec(),
     User.countDocuments({ org_id }).exec(),
     SalesOrder.aggregate([
@@ -113,7 +113,7 @@ dashboardSchema.statics.saveOrgData = async function (org_id) {
     ]).exec(),
     // Product.find({ org_id, qty: { $lt: 5 } }),
     Invoice.find({ org_id }).sort({ createdAt: -1 }).limit(5),
-    Customer.find({ org_id }).sort({ createdAt: -1 }).limit(5)
+    Student.find({ org_id }).sort({ createdAt: -1 }).limit(5)
   ])
 
   // const productsCount = await Product.countDocuments({ org_id }).exec();
@@ -123,7 +123,7 @@ dashboardSchema.statics.saveOrgData = async function (org_id) {
   // }).exec();
   // const categoriesCount = await Category.countDocuments({ org_id }).exec();
   //   const salesCount = await SalesOrder.countDocuments({ org_id }).exec();
-  //   const customersCount = await Customer.countDocuments({ org_id }).exec();
+  //   const customersCount = await Student.countDocuments({ org_id }).exec();
   //   const vendorsCount = await Vendor.countDocuments({ org_id }).exec();
   //   const usersCount = await User.countDocuments({ org_id }).exec();
 
@@ -187,7 +187,7 @@ dashboardSchema.statics.saveOrgData = async function (org_id) {
   //   const recentInvoice = await Invoice.find({ org_id })
   //     .sort({ createdAt: -1 })
   //     .limit(5);
-  //   const recentCustomers = await Customer.find({ org_id })
+  //   const recentCustomers = await Student.find({ org_id })
   //     .sort({ createdAt: -1 })
   //     .limit(5);
 

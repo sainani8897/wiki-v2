@@ -5,7 +5,7 @@ const { authenticateToken } = require('../middleware/jwt-token-verification')
 const validationMiddleware = require('../middleware/validation-middleware')
 
 const users = require('./users')
-const customer = require('./customer')
+const student = require('./student')
 
 const authController = require('../controllers/auth.contoller')
 const mediaManager = require('../routes/mediaManager')
@@ -64,8 +64,8 @@ Routes.use('/roles', authenticateToken, roles)
 /** Permissions Routes */
 Routes.get('/permissions', authenticateToken, permissions.index)
 
-/** Customers Routes */
-Routes.use('/customers', authenticateToken, customer)
+/** Student Routes */
+Routes.use('/students', authenticateToken, student)
 
 Routes.use('/vendors', authenticateToken, vendors)
 

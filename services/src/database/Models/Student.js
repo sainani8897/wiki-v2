@@ -33,7 +33,7 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    customer_type: {
+    type: {
       type: String
     },
     saluation: {
@@ -77,23 +77,26 @@ const customerSchema = new mongoose.Schema(
     status: {
       type: String
     },
-    pan: {
-      type: String
-    },
-    gst: {
-      type: String
-    },
     profile: {
       type: String
     },
     social_info: {
       type: SocialSchema
     },
+    highest_qualification: String,
     notes: String,
     contacts: [mongoose.Schema.Types.Mixed],
     org_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organization'
+    },
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    isDeleted: { type: Boolean, defaults: false },
+    deletedAt: {
+      type: Date
     }
   },
   { timestamps: true },
@@ -112,6 +115,6 @@ const customerSchema = new mongoose.Schema(
 
 customerSchema.plugin(mongoosePaginate)
 
-const Customer = mongoose.model('Customer', customerSchema)
+const Student = mongoose.model('Student', customerSchema)
 
-module.exports = Customer
+module.exports = Student

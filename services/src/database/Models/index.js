@@ -10,6 +10,7 @@ const Organization = require('./Organization')
 const Course = require('./Course')
 const Section = require('./Section')
 const Lecture = require('./Lecture')
+const Student = require('./Student')
 
 const models = {
   User,
@@ -23,7 +24,8 @@ const models = {
   Organization,
   Course,
   Section,
-  Lecture
+  Lecture,
+  Student
 }
 
 module.exports = models

@@ -39,12 +39,12 @@ export const appNavs = [
       {
         eventKey: 'students',
         title: 'Students',
-        to: '/table-virtualized'
+        to: '/students'
       },
       {
         eventKey: 'Instructors',
         title: 'Instructors',
-        to: '/table-virtualized'
+        to: '/instuctors'
       }
     ]
   },

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-use-before-define
 import React from 'react';
 import { Popover, Whisper, Checkbox, Dropdown, IconButton, Table, CellProps } from 'rsuite';
 import MoreIcon from '@rsuite/icons/legacy/More';
@@ -11,13 +12,13 @@ export const NameCell = ({ rowData, dataKey, ...props }: CellProps) => {
         <b>Name:</b> {rowData.name}
       </p>
       <p>
-        <b>Gender:</b> {rowData.gender}
+        <b>email:</b> {rowData.email}
       </p>
       <p>
-        <b>City:</b> {rowData.city}
+        <b>Mobile:</b> {rowData.mobile}
       </p>
       <p>
-        <b>Street:</b> {rowData.street}
+        <b>Status:</b> {rowData.status}
       </p>
     </Popover>
   );
@@ -79,11 +80,11 @@ const renderMenu = ({ onClose, left, top, className }: any, ref) => {
   return (
     <Popover ref={ref} className={className} style={{ left, top }} full>
       <Dropdown.Menu onSelect={handleSelect}>
-        <Dropdown.Item eventKey={1}>Follow</Dropdown.Item>
-        <Dropdown.Item eventKey={2}>Sponsor</Dropdown.Item>
-        <Dropdown.Item eventKey={3}>Add to friends</Dropdown.Item>
+        <Dropdown.Item eventKey={1}>Edit</Dropdown.Item>
+        <Dropdown.Item eventKey={2}>Delete</Dropdown.Item>
+        <Dropdown.Item eventKey={3}>Enroll Course</Dropdown.Item>
         <Dropdown.Item eventKey={4}>View Profile</Dropdown.Item>
-        <Dropdown.Item eventKey={5}>Block</Dropdown.Item>
+        {/* <Dropdown.Item eventKey={5}>Block</Dropdown.Item> */}
       </Dropdown.Menu>
     </Popover>
   );

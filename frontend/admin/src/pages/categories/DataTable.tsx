@@ -25,7 +25,7 @@ import TrashIcon from '@rsuite/icons/Trash';
 import DrawerView from './DrawerView';
 import { mockUsers } from '@/data/mock';
 import { NameCell, ImageCell, CheckCell, ActionCell } from './Cells';
-import  DeleteModal from './DeleteModal';
+import DeleteModal from './DeleteModal';
 import axiosInstance from '../../interceptors/axios';
 
 
@@ -74,8 +74,8 @@ const DataTable = () => {
     return v;
   });
 
-  let checked = false;
-  let indeterminate = false;
+  const checked = false;
+  const indeterminate = false;
 
   // if (checkedKeys.length === data.length) {
   //   checked = true;
@@ -98,10 +98,10 @@ const DataTable = () => {
   const onEdit = (data: any) => {
     setCategoryData(data);
     setAction('edit');
-    setActionId(data._id)
+    setActionId(data._id);
     setShowDrawer(true);
     console.log("Edit data::",data);
-  }
+  };
 
   const handleSortColumn = (sortColumn, sortType) => {
     setSortColumn(sortColumn);
@@ -153,7 +153,7 @@ const DataTable = () => {
   }, [page, limit]);
 
 
-  const getCategories = (page: number = 1, limit: number = 10) => {
+  const getCategories = (page = 1, limit = 10) => {
     return axiosInstance.get('/categories', { params: { limit, page } })
       .then(response => {
         setCategories(response.data);
@@ -161,23 +161,23 @@ const DataTable = () => {
       .catch(error => {
         console.error(error);
       });
-  }
+  };
 
   const deleteModal = (id:string) => {
     setdeleteId(id);
     setShowDeleteModal(true);
-  }
+  };
 
   const reloadComponent = () =>{
     getCategories();
-  }
+  };
 
   const add = () => {
-    setAction('create')
-    setShowDrawer(true)
-    setCategoryData({})
-    setActionId('')
-  }
+    setAction('create');
+    setShowDrawer(true);
+    setCategoryData({});
+    setActionId('');
+  };
 
   return (
     <>
@@ -254,9 +254,9 @@ const DataTable = () => {
             {/* {rowData => rowData.parent_id?.category_name} */}
             {
               rowData => (<ButtonToolbar>
-                <IconButton size="sm" color="blue" onClick={()=>{ onEdit(rowData) }} appearance="ghost" circle icon={<EditIcon />} />
+                <IconButton size="sm" color="blue" onClick={()=>{ onEdit(rowData); }} appearance="ghost" circle icon={<EditIcon />} />
                 <IconButton size="sm" onClick={()=>{
-                  deleteModal(rowData._id)
+                  deleteModal(rowData._id);
                 }} color="red" appearance="ghost" circle icon={<TrashIcon />} />
               </ButtonToolbar>)
             }

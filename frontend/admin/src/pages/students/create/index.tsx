@@ -1,22 +1,26 @@
-// eslint-disable-next-line no-use-before-define
+/* eslint-disable no-use-before-define */
 import React from 'react';
+import BasicForm from './StudentForm';
+
 import { Breadcrumb, Panel } from 'rsuite';
-import DataTable from './DataTable';
 
 const Page = () => {
+  console.log("I am here!!!!");
+  
   return (
     <Panel
       header={
         <>
-          <h3 className="title">Students</h3>
+          <h3 className="title">Basic Form</h3>
           <Breadcrumb>
             <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
-            <Breadcrumb.Item active>Students</Breadcrumb.Item>
+            <Breadcrumb.Item>Forms</Breadcrumb.Item>
+            <Breadcrumb.Item active>Create Student</Breadcrumb.Item>
           </Breadcrumb>
         </>
       }
     >
-      <DataTable />
+      <BasicForm />
     </Panel>
   );
 };

@@ -23,7 +23,14 @@ import FormWizardPage from './pages/forms/wizard';
 import CalendarPage from './pages/calendar';
 import { appNavs } from './config';
 import Users from './pages/users';
-import dotenv from 'dotenv';
+import Students from './pages/students';
+import StudentsCreate from './pages/students/create';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+
+const AuthenticatedRoutes = ({ children }) => {
+  // You can include a layout or additional components here if needed
+  return <div>{children}</div>;
+};
 
 const App = () => {
   // dotenv.config();
@@ -39,6 +46,8 @@ const App = () => {
           <Route path="error-503" element={<Error503Page />} />
           {/* Auth Files */}
           <Route path="/" element={<Frame navs={appNavs} />}>
+            {/* <PrivateRoute component={AuthenticatedRoutes}>
+            </PrivateRoute> */}
             <Route index element={<DashboardPage />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="table-members" element={<MembersPage />} />
@@ -47,6 +56,8 @@ const App = () => {
             <Route path="roles" element={<Roles />} />
             <Route path="permissions" element={<Permissions />} />
             <Route path="users" element={<Users />} />
+            <Route path="students" element={<Students />} />
+            <Route path="create-student" element={<StudentsCreate />} />
             {/* <Route path="sign-in" element={<SignInPage />} />
             <Route path="sign-up" element={<SignUpPage />} /> */}
             <Route path="form-basic" element={<FormBasicPage />} />

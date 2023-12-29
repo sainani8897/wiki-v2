@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// eslint-disable-next-line no-use-before-define
+import React, {useState,useEffect } from 'react';
 import {
   Input,
   InputGroup,
@@ -6,7 +7,6 @@ import {
   Button,
   DOMHelper,
   Progress,
-  Checkbox,
   Stack,
   SelectPicker,
   Pagination
@@ -15,7 +15,10 @@ import SearchIcon from '@rsuite/icons/Search';
 import MoreIcon from '@rsuite/icons/legacy/More';
 import DrawerView from './DrawerView';
 import { mockUsers } from '@/data/mock';
-import { NameCell, ImageCell, CheckCell, ActionCell } from './Cells';
+import { NameCell, ImageCell, ActionCell } from './Cells';
+import axiosInstance from '../../interceptors/axios';
+import { useNavigate } from "react-router-dom";
+
 
 // const data = mockUsers(20);
 const defaultData = mockUsers(1000);
@@ -23,14 +26,6 @@ const defaultData = mockUsers(1000);
 const { Column, HeaderCell, Cell } = Table;
 const { getHeight } = DOMHelper;
 
-const ratingList = Array.from({ length: 5 }).map((_, index) => {
-  return {
-    value: index + 1,
-    label: Array.from({ length: index + 1 })
-      .map(() => '⭐️')
-      .join('')
-  };
-});
 
 
 const DataTable = () => {
@@ -42,28 +37,30 @@ const DataTable = () => {
   const [rating, setRating] = useState<number | null>(null);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
+  const [students, setStudents] = useState<any>({});
+  const navigate = useNavigate();
 
   const handleChangeLimit = dataKey => {
     setPage(1);
     setLimit(dataKey);
   };
 
-  const data = defaultData.filter((v, i) => {
-    const start = limit * (page - 1);
-    const end = start + limit;
-    return i >= start && i < end;
+  const defaultData: any = students;
+
+  const data = defaultData?.data?.docs.map((v, i) => {
+    return v;
   });
 
   let checked = false;
   let indeterminate = false;
 
-  if (checkedKeys.length === data.length) {
-    checked = true;
-  } else if (checkedKeys.length === 0) {
-    checked = false;
-  } else if (checkedKeys.length > 0 && checkedKeys.length < data.length) {
-    indeterminate = true;
-  }
+  // if (checkedKeys.length === data.length) {
+  //   checked = true;
+  // } else if (checkedKeys.length === 0) {
+  //   checked = false;
+  // } else if (checkedKeys.length > 0 && checkedKeys.length < data.length) {
+  //   indeterminate = true;
+  // }
 
   const handleCheckAll = (_value, checked) => {
     const keys = checked ? data.map(item => item.id) : [];
@@ -81,50 +78,38 @@ const DataTable = () => {
   };
 
   const filteredData = () => {
-    const filtered = data.filter(item => {
-      if (!item.name.includes(searchKeyword)) {
-        return false;
-      }
-
-      if (rating && item.rating !== rating) {
-        return false;
-      }
-
-      return true;
-    });
-
-    if (sortColumn && sortType) {
-      return filtered.sort((a, b) => {
-        let x: any = a[sortColumn];
-        let y: any = b[sortColumn];
-
-        if (typeof x === 'string') {
-          x = x.charCodeAt(0);
-        }
-        if (typeof y === 'string') {
-          y = y.charCodeAt(0);
-        }
-
-        if (sortType === 'asc') {
-          return x - y;
-        } else {
-          return y - x;
-        }
-      });
+    if (students?.status === 200) {
+      return data;
     }
-    return filtered;
   };
+
+  const getData = (page = 1, limit = 10) => {
+    return axiosInstance.get('/students', { params: { limit, page } })
+      .then(response => {
+        setStudents(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  useEffect(() => {
+    getData(page, limit);
+  }, [page, limit]);
 
 
 
   return (
     <>
       <Stack className="table-toolbar" justifyContent="space-between">
-        <Button appearance="primary" onClick={() => setShowDrawer(true)}>
-          Add Member
+        <Button appearance="primary" onClick={()=>{
+           navigate("/create-student");
+        }} > 
+          Add Student
         </Button>
+        {/* onClick={() => setShowDrawer(true)} */}
 
-        <Stack spacing={6}>
+        {/* <Stack spacing={6}>
           <SelectPicker
             label="Rating"
             data={ratingList}
@@ -138,7 +123,7 @@ const DataTable = () => {
               <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
-        </Stack>
+        </Stack> */}
       </Stack>
 
       <Table
@@ -150,63 +135,65 @@ const DataTable = () => {
       >
         <Column width={50} align="center" fixed>
           <HeaderCell>Id</HeaderCell>
-          <Cell dataKey="id" />
+          <Cell dataKey="_id" />
         </Column>
 
-        <Column width={50} fixed>
-          <HeaderCell style={{ padding: 0 }}>
-            <div style={{ lineHeight: '40px' }}>
-              <Checkbox
-                inline
-                checked={checked}
-                indeterminate={indeterminate}
-                onChange={handleCheckAll}
-              />
-            </div>
-          </HeaderCell>
-          <CheckCell dataKey="id" checkedKeys={checkedKeys} onChange={handleCheck} />
-        </Column>
+       
         <Column width={80} align="center">
           <HeaderCell>Avatar</HeaderCell>
-          <ImageCell dataKey="avatar" />
+          <ImageCell dataKey="profile" />
         </Column>
 
         <Column minWidth={160} flexGrow={1} sortable>
           <HeaderCell>Name</HeaderCell>
           <NameCell dataKey="name" />
         </Column>
+        <Column width={300}>
+          <HeaderCell>Email</HeaderCell>
+          <Cell dataKey="email" />
+        </Column>
+        <Column width={300}>
+          <HeaderCell>Mobile</HeaderCell>
+          <Cell dataKey="mobile" />
+        </Column>
+        <Column width={300}>
+          <HeaderCell>Status</HeaderCell>
+          <Cell dataKey="status" />
+        </Column>
 
         <Column width={230} sortable>
-          <HeaderCell>Skill Proficiency</HeaderCell>
+          <HeaderCell>Overall Progress</HeaderCell>
           <Cell style={{ padding: '10px 0' }} dataKey="progress">
-            {rowData => <Progress percent={rowData.progress} showInfo={false} />}
+            {rowData => <Progress percent={83} showInfo={false} />}
           </Cell>
         </Column>
 
-        <Column width={100} sortable>
+        {/* <Column width={100} sortable>
           <HeaderCell>Rating</HeaderCell>
           <Cell dataKey="rating">
             {rowData =>
               Array.from({ length: rowData.rating }).map((_, i) => <span key={i}>⭐️</span>)
             }
           </Cell>
+        </Column> */}
+
+        <Column width={100} sortable>
+          <HeaderCell>Courses Enrolled</HeaderCell>
+          <Cell>{2}</Cell>
         </Column>
 
         <Column width={100} sortable>
-          <HeaderCell>Income</HeaderCell>
-          <Cell dataKey="amount">{rowData => `$${rowData.amount}`}</Cell>
+          <HeaderCell>Courses Completed</HeaderCell>
+          <Cell>{1}</Cell>
         </Column>
 
-        <Column width={300}>
-          <HeaderCell>Email</HeaderCell>
-          <Cell dataKey="email" />
-        </Column>
+        
 
         <Column width={120}>
           <HeaderCell>
             <MoreIcon />
           </HeaderCell>
-          <ActionCell dataKey="id" />
+          <ActionCell dataKey="_id" />
         </Column>
       </Table>
       <div style={{ padding: 20 }}>
@@ -220,7 +207,7 @@ const DataTable = () => {
           maxButtons={5}
           size="xs"
           layout={['total', '-', 'limit', '|', 'pager', 'skip']}
-          total={defaultData.length}
+          total={defaultData?.data?.totalDocs}
           limitOptions={[10, 30, 50]}
           limit={limit}
           activePage={page}

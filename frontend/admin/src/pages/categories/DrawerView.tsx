@@ -95,7 +95,7 @@ const DrawerView = (props: DrawerProps) => {
         onCheck={setFormError}>
 
         <Drawer.Header>
-          <Drawer.Title>{action == 'create' ? "Add" : 'Edit' } a Category</Drawer.Title>
+          <Drawer.Title>{action === 'create' ? "Add" : 'Edit' } a Category</Drawer.Title>
           <Drawer.Actions>
             <Button appearance="primary" type="submit">
               Confirm

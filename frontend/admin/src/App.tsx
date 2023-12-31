@@ -56,8 +56,15 @@ const App = () => {
             <Route path="roles" element={<Roles />} />
             <Route path="permissions" element={<Permissions />} />
             <Route path="users" element={<Users />} />
-            <Route path="students" element={<Students />} />
+            {/* <Route path="students" element={<Students />} /> */}
+            <Route path="/students">
+              <Route index element={<Students />} />
+              <Route path="create" element={<StudentsCreate />} />
+              <Route path="edit/:id" element={<StudentsCreate />} />
+              {/* <Route path="me" element={...} /> */}
+            </Route>
             <Route path="create-student" element={<StudentsCreate />} />
+            <Route path="update-student/:id" element={<StudentsCreate />} />
             {/* <Route path="sign-in" element={<SignInPage />} />
             <Route path="sign-up" element={<SignUpPage />} /> */}
             <Route path="form-basic" element={<FormBasicPage />} />

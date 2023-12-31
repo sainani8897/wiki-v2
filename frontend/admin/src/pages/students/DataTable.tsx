@@ -9,10 +9,14 @@ import {
   Progress,
   Stack,
   SelectPicker,
-  Pagination
+  IconButton,
+  Pagination,
+  ButtonToolbar
 } from 'rsuite';
 import SearchIcon from '@rsuite/icons/Search';
 import MoreIcon from '@rsuite/icons/legacy/More';
+import EditIcon from '@rsuite/icons/Edit';
+import TrashIcon from '@rsuite/icons/Trash';
 import DrawerView from './DrawerView';
 import { mockUsers } from '@/data/mock';
 import { NameCell, ImageCell, ActionCell } from './Cells';
@@ -97,13 +101,16 @@ const DataTable = () => {
     getData(page, limit);
   }, [page, limit]);
 
+  const onEdit = (data: any) => {
+    navigate(`/students/edit/${data._id}`);
+  };
 
 
   return (
     <>
       <Stack className="table-toolbar" justifyContent="space-between">
         <Button appearance="primary" onClick={()=>{
-           navigate("/create-student");
+           navigate("/students/create");
         }} > 
           Add Student
         </Button>
@@ -193,8 +200,20 @@ const DataTable = () => {
           <HeaderCell>
             <MoreIcon />
           </HeaderCell>
-          <ActionCell dataKey="_id" />
+          <Cell className="link-group">
+            {/* {rowData => rowData.parent_id?.category_name} */}
+            {
+              rowData => (<ButtonToolbar>
+                <IconButton size="sm" color="blue" onClick={()=>{ onEdit(rowData) }} appearance="ghost" circle icon={<EditIcon />} />
+                {/* <IconButton size="sm" onClick={()=>{
+                  deleteModal(rowData._id);
+                }} color="red" appearance="ghost" circle icon={<TrashIcon />} /> */}
+              </ButtonToolbar>)
+            }
+
+          </Cell>
         </Column>
+
       </Table>
       <div style={{ padding: 20 }}>
         <Pagination

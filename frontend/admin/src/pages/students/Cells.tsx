@@ -75,7 +75,7 @@ export const CheckCell = ({
 const renderMenu = ({ onClose, left, top, className }: any, ref) => {
   const handleSelect = eventKey => {
     onClose();
-    console.log(eventKey);
+    console.log("event:",eventKey);
   };
   return (
     <Popover ref={ref} className={className} style={{ left, top }} full>

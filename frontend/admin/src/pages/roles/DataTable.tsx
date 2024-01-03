@@ -25,7 +25,7 @@ import TrashIcon from '@rsuite/icons/Trash';
 import DrawerView from './DrawerView';
 import { mockUsers } from '@/data/mock';
 import { NameCell, ImageCell, CheckCell, ActionCell } from './Cells';
-import  DeleteModal from './DeleteModal';
+import DeleteModal from './DeleteModal';
 import axiosInstance from '../../interceptors/axios';
 
 
@@ -75,34 +75,14 @@ const DataTable = () => {
     return v;
   });
 
-  let checked = false;
-  let indeterminate = false;
-
-  // if (checkedKeys.length === data.length) {
-  //   checked = true;
-  // } else if (checkedKeys.length === 0) {
-  //   checked = false;
-  // } else if (checkedKeys.length > 0 && checkedKeys.length < data.length) {
-  //   indeterminate = true;
-  // }
-
-  const handleCheckAll = (_value, checked) => {
-    // const keys = checked ? data.map(item => item.id) : [];
-    // setCheckedKeys(keys);
-  };
-
-  const handleCheck = (value, checked) => {
-    // const keys = checked ? [...checkedKeys, value] : checkedKeys.filter(item => item !== value);
-    // setCheckedKeys(keys);
-  };
 
   const onEdit = (data: any) => {
     setRoleData(data);
     setAction('edit');
-    setActionId(data._id)
+    setActionId(data._id);
     setShowDrawer(true);
     console.log("Edit data::",data);
-  }
+  };
 
   const handleSortColumn = (sortColumn, sortType) => {
     setSortColumn(sortColumn);
@@ -151,11 +131,11 @@ const DataTable = () => {
 
   useEffect(() => {
     getRoles(page, limit);
-    getPermissions()
+    getPermissions();
   }, [page, limit]);
 
 
-  const getRoles = (page: number = 1, limit: number = 10) => {
+  const getRoles = (page = 1, limit = 10) => {
     return axiosInstance.get('/roles', { params: { limit, page } })
       .then(response => {
         setRoles(response.data);
@@ -163,9 +143,9 @@ const DataTable = () => {
       .catch(error => {
         console.error(error);
       });
-  }
+  };
 
-  const getPermissions = (page: number = 1, limit: number = 1000) => {
+  const getPermissions = (page = 1, limit = 1000) => {
     return axiosInstance.get('/permissions', { params: { limit, page } })
       .then(response => {
         setPermissions(response.data);
@@ -173,24 +153,24 @@ const DataTable = () => {
       .catch(error => {
         console.error(error);
       });
-  }
+  };
 
   const deleteModal = (id:string) => {
     setdeleteId(id);
     setShowDeleteModal(true);
-  }
+  };
 
   const reloadComponent = () =>{
     getRoles();
     getPermissions();
-  }
+  };
 
   const add = () => {
-    setAction('create')
-    setShowDrawer(true)
-    setRoleData({})
-    setActionId('')
-  }
+    setAction('create');
+    setShowDrawer(true);
+    setRoleData({});
+    setActionId('');
+  };
 
   return (
     <>
@@ -262,9 +242,9 @@ const DataTable = () => {
             {/* {rowData => rowData.parent_id?.category_name} */}
             {
               rowData => (<ButtonToolbar>
-                <IconButton size="sm" color="blue" onClick={()=>{ onEdit(rowData) }} appearance="ghost" circle icon={<EditIcon />} />
+                <IconButton size="sm" color="blue" onClick={()=>{ onEdit(rowData); }} appearance="ghost" circle icon={<EditIcon />} />
                 <IconButton size="sm" onClick={()=>{
-                  deleteModal(rowData._id)
+                  deleteModal(rowData._id);
                 }} color="red" appearance="ghost" circle icon={<TrashIcon />} />
               </ButtonToolbar>)
             }

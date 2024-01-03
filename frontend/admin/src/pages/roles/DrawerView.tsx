@@ -116,7 +116,7 @@ const DrawerView = (props: DrawerProps) => {
     <>
       <Drawer backdrop="static" size="sm" placement="right" onClose={onClose} {...rest}>
         <Drawer.Header>
-          <Drawer.Title>{action == 'create' ? "Add" : 'Edit'} a Role</Drawer.Title>
+          <Drawer.Title>{action === 'create' ? "Add" : 'Edit'} a Role</Drawer.Title>
           <Drawer.Actions>
             <Button appearance="primary" type="button" onClick={handleSubmit}>
               Confirm
@@ -140,12 +140,12 @@ const DrawerView = (props: DrawerProps) => {
             </Form.Group>
             <Form.Group controlId="checkPicker">
               <Form.ControlLabel>Permissions</Form.ControlLabel>
-              <CheckPicker name='permissions' onSelect={(value)=>{
+              <CheckPicker name='permissions' onSelect={value=>{
                 const formData = formValue;
                 formData.permissions = value
                 setFormValue(formData);
                 console.log(formValue)
-              }} data={selectData} renderValue={(formValue)=>{}}
+              }} data={selectData} renderValue={formValue=>{}}
               groupBy="role" style={{ width: '100%' }} />
             </Form.Group>
             <Form.Group controlId="selectPicker">

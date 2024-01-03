@@ -22,6 +22,7 @@ import { mockUsers } from '@/data/mock';
 import { NameCell, ImageCell, ActionCell } from './Cells';
 import axiosInstance from '../../interceptors/axios';
 import { useNavigate } from "react-router-dom";
+import DeleteModal from './DeleteModal';
 
 
 // const data = mockUsers(20);
@@ -34,6 +35,8 @@ const { getHeight } = DOMHelper;
 
 const DataTable = () => {
   const [showDrawer, setShowDrawer] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setdeleteId] = useState('');
   const [checkedKeys, setCheckedKeys] = useState<number[]>([]);
   const [sortColumn, setSortColumn] = useState();
   const [sortType, setSortType] = useState();
@@ -105,6 +108,14 @@ const DataTable = () => {
     navigate(`/students/edit/${data._id}`);
   };
 
+  const deleteModal = (id:string) => {
+    setdeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const reloadComponent = () =>{
+    getData();
+  };
 
   return (
     <>
@@ -205,9 +216,9 @@ const DataTable = () => {
             {
               rowData => (<ButtonToolbar>
                 <IconButton size="sm" color="blue" onClick={()=>{ onEdit(rowData) }} appearance="ghost" circle icon={<EditIcon />} />
-                {/* <IconButton size="sm" onClick={()=>{
+                <IconButton size="sm" onClick={()=>{
                   deleteModal(rowData._id);
-                }} color="red" appearance="ghost" circle icon={<TrashIcon />} /> */}
+                }} color="red" appearance="ghost" circle icon={<TrashIcon />} />
               </ButtonToolbar>)
             }
 
@@ -235,6 +246,9 @@ const DataTable = () => {
         />
       </div>
       <DrawerView open={showDrawer} onClose={() => setShowDrawer(false)} />
+
+      {/* Delete Modal */}
+      <DeleteModal open={showDeleteModal} deleteId={deleteId} onClose={() => setShowDeleteModal(false)} reload={()=>reloadComponent()} />
     </>
   );
 };

@@ -100,6 +100,7 @@ exports.create = async function (req, res, next) {
       alt_email: payload.alt_email,
       contacts: payload.contacts,
       profile: payload.profile,
+      highest_qualification: payload.highest_qualification,
       social_info: {
         whatsapp: payload.whatsapp,
         instagram: payload.instagram,
@@ -107,7 +108,15 @@ exports.create = async function (req, res, next) {
         facebook: payload.facebook,
         website_url: payload.website_url
       },
-      address: payload.address,
+      address: {
+        address_line1: payload.address_line1,
+        address_line2: payload.address_line2,
+        city: payload.city,
+        state: payload.state,
+        pincode: payload.pincode,
+        latitude: payload.latitude,
+        longitude: payload.longitude
+      },
       status: payload.status,
       org_id: req.user.org_id,
       user_id: user._id
@@ -153,6 +162,7 @@ exports.update = async function (req, res, next) {
       alt_email: payload.alt_email,
       contacts: payload.contacts,
       profile: payload.profile,
+      highest_qualification: payload.highest_qualification,
       social_info: {
         whatsapp: payload.whatsapp,
         instagram: payload.instagram,
@@ -160,7 +170,15 @@ exports.update = async function (req, res, next) {
         facebook: payload.facebook,
         website_url: payload.website_url
       },
-      address: payload.address,
+      address: {
+        address_line1: payload.address_line1,
+        address_line2: payload.address_line2,
+        city: payload.city,
+        state: payload.state,
+        pincode: payload.pincode,
+        latitude: payload.latitude,
+        longitude: payload.longitude
+      },
       status: payload.status,
       org_id: req.user.org_id
     })

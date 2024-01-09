@@ -26,6 +26,7 @@ import Users from './pages/users';
 import Students from './pages/students';
 import StudentsCreate from './pages/students/create';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import UserForm from './pages/users/create';
 
 const AuthenticatedRoutes = ({ children }) => {
   // You can include a layout or additional components here if needed
@@ -55,12 +56,18 @@ const App = () => {
             <Route path="categories" element={<Categories />} />
             <Route path="roles" element={<Roles />} />
             <Route path="permissions" element={<Permissions />} />
-            <Route path="users" element={<Users />} />
+            {/* <Route path="users" element={<Users />} /> */}
             {/* <Route path="students" element={<Students />} /> */}
             <Route path="/students">
               <Route index element={<Students />} />
               <Route path="create" element={<StudentsCreate />} />
               <Route path="edit/:id" element={<StudentsCreate />} />
+              {/* <Route path="me" element={...} /> */}
+            </Route>
+            <Route path="/users">
+              <Route index element={<Users />} />
+              <Route path="create" element={<UserForm />} />
+              <Route path="edit/:id" element={<UserForm />} />
               {/* <Route path="me" element={...} /> */}
             </Route>
             <Route path="create-student" element={<StudentsCreate />} />

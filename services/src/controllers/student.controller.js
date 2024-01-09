@@ -75,7 +75,7 @@ exports.create = async function (req, res, next) {
       first_name: payload.first_name,
       last_name: payload.last_name,
       saluation: payload.saluation,
-      user_type: payload.type,
+      user_type: 'student',
       name: payload.first_name + ' ' + payload.last_name,
       display_name: payload.display_name,
       email: payload.email,

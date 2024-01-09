@@ -145,7 +145,7 @@ const DrawerView = (props: DrawerProps) => {
                 formData.permissions = value
                 setFormValue(formData);
                 console.log(formValue)
-              }} data={selectData} renderValue={formValue=>{}}
+              }} data={selectData} 
               groupBy="role" style={{ width: '100%' }} />
             </Form.Group>
             <Form.Group controlId="selectPicker">

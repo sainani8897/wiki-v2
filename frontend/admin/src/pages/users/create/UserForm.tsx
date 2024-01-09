@@ -10,14 +10,15 @@ import {
   Schema,
   ButtonToolbar,
   Button,
-  toaster
+  toaster,
+  CheckPicker
 } from 'rsuite';
 import PageContent from '@/components/PageContent';
 import axiosInstance from '../../../interceptors/axios';
 import { useNavigate, useParams } from "react-router-dom";
 
 
-const StudentForm = () => {
+const UserForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   /* Schema for validation */
@@ -37,6 +38,7 @@ const StudentForm = () => {
   const [formError, setFormError] = React.useState({});
   const [formValue, setFormValue] = React.useState({} as any);
   const [action, setAction] = React.useState('add');
+  const [selectData, setRolesData] = React.useState([]);
 
   const handleSubmit = e => {
     if (action === 'add') {
@@ -46,20 +48,20 @@ const StudentForm = () => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const create = (event: SyntheticEvent) => {
+  const create = (_event: SyntheticEvent) => {
     const payload = formValue;
     payload.address = {
       address_line1: formValue.addres_line1,
       address_line2: formValue.addres_line2,
       city: formValue.city,
-      pincode:formValue.pincode,
+      pincode: formValue.pincode,
       state: formValue.state
     };
-    axiosInstance.post('/students', { payload })
+    axiosInstance.post('/users', { payload })
       .then(response => {
         setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
-        navigate("/students", { replace: true });
+        navigate("/users", { replace: true });
       })
       .catch(error => {
         const error_msg = error?.response?.data?.message ?? "Oops Something went wrong";
@@ -75,14 +77,14 @@ const StudentForm = () => {
       address_line1: formValue.addres_line1,
       address_line2: formValue.addres_line2,
       city: formValue.city,
-      pincode:formValue.pincode,
+      pincode: formValue.pincode,
       state: formValue.state
     };
-    axiosInstance.patch('/students', { payload })
+    axiosInstance.patch('/users', { payload })
       .then(response => {
         setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
-        navigate("/students", { replace: true });
+        navigate("/users", { replace: true });
       })
       .catch(error => {
         const error_msg = error?.response?.data?.message ?? "Oops Something went wrong";
@@ -91,7 +93,7 @@ const StudentForm = () => {
   };
 
   const getData = () => {
-    axiosInstance.get('/students', { params: { _id: id } })
+    axiosInstance.get('/users', { params: { _id: id } })
       .then(response => {
         const data = response?.data;
         console.log("response", data);
@@ -108,13 +110,33 @@ const StudentForm = () => {
           status: data.data?.docs[0]?.status ?? '',
           highest_qualification: data.data?.docs[0]?.highest_qualification ?? '',
         });
-        toaster.push(<Message showIcon type="success">{response.data.message}</Message>,{ placement:'topEnd', duration: 5000 });
+        toaster.push(<Message showIcon type="success">{response.data.message}</Message>, { placement: 'topEnd', duration: 5000 });
       })
       .catch(error => {
         const error_msg = error?.response?.data?.message ?? "Oops Something went wrong";
-        toaster.push(<Message showIcon type="error">{error_msg}</Message>,{ placement:'topEnd', duration: 5000 });
+        toaster.push(<Message showIcon type="error">{error_msg}</Message>, { placement: 'topEnd', duration: 5000 });
       });
   };
+
+  const getRoles = async () => {
+    try {
+      const {data:roles} = await axiosInstance.get('/roles');
+      const selectDataRaw = roles?.data?.docs?.map(item => ({
+        label: item.display_text,
+        value: item._id,
+      })) ?? [];
+
+      console.log("selectDataRaw::::::",selectDataRaw);
+      console.log("roles?.data::::::",roles?.data);
+      
+      setRolesData(selectDataRaw);
+
+    } catch (error) {
+
+    }
+
+  };
+
 
 
   useEffect(() => {
@@ -122,15 +144,16 @@ const StudentForm = () => {
       console.log("i am edit!!!!");
       setAction('edit');
       getData();
-    }else{
+    } else {
       setAction('add');
     }
+    getRoles();
   }, [id]);
 
   return (
     <PageContent>
       <Message>
-        Student Edit Page.
+        User Edit Page.
       </Message>
       <Divider />
       <Form className="basic-form" layout="horizontal" model={model} formValue={formValue} onChange={setFormValue} onSubmit={handleSubmit}
@@ -148,6 +171,16 @@ const StudentForm = () => {
         <Form.Group controlId="email">
           <Form.ControlLabel>Email</Form.ControlLabel>
           <Form.Control name="email" />
+        </Form.Group>
+
+        <Form.Group controlId="Password">
+          <Form.ControlLabel>Password</Form.ControlLabel>
+          <Form.Control type='password' name="password" />
+        </Form.Group>
+
+        <Form.Group controlId="Confirm Password">
+          <Form.ControlLabel>Confirm Password</Form.ControlLabel>
+          <Form.Control type='password' name="password_confirmation" />
         </Form.Group>
 
         <Form.Group controlId="mobile">
@@ -180,31 +213,19 @@ const StudentForm = () => {
           <Form.Control name="pincode" />
         </Form.Group>
 
-        <Form.Group controlId="Highest_qualification">
-          <Form.ControlLabel>Highest Qualification</Form.ControlLabel>
-          <Form.Control name="highest_qualification" accepter={SelectPicker} data={[
-            {
-              label: 'Bachelors',
-              value: "Bachelors"
-            }, {
-              label: 'Graducation',
-              value: "Graducation"
-            },
-            {
-              label: 'Masters',
-              value: "Masters"
-            },
-            {
-              label: 'PG/Diploma',
-              value: "PG/Diploma"
-            }, {
-              label: 'High School',
-              value: "High School"
-            }
-
-
-          ]} />
+        <Form.Group controlId="checkPicker">
+          <Form.ControlLabel>Role</Form.ControlLabel>
+          <CheckPicker name='roles' onSelect={value => {
+            const formData = formValue;
+            formData.roles = value;
+            setFormValue(formData);
+            console.log(formValue);
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+          }} data={selectData} 
+          />
         </Form.Group>
+
+
         <Form.Group controlId="selectPicker">
           <Form.ControlLabel>Status</Form.ControlLabel>
           <Form.Control name="status" accepter={SelectPicker} data={[
@@ -232,4 +253,4 @@ const StudentForm = () => {
   );
 };
 
-export default StudentForm;
+export default UserForm;

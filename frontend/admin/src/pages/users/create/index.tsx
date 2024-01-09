@@ -1,9 +1,11 @@
-// eslint-disable-next-line no-use-before-define
+/* eslint-disable no-use-before-define */
 import React from 'react';
+import UserForm from './UserForm';
+
 import { Breadcrumb, Panel } from 'rsuite';
-import DataTable from './DataTable';
 
 const Page = () => {
+  
   return (
     <Panel
       header={
@@ -11,12 +13,13 @@ const Page = () => {
           <h3 className="title">Users</h3>
           <Breadcrumb>
             <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
-            <Breadcrumb.Item active>Students</Breadcrumb.Item>
+            <Breadcrumb.Item href="/users">Users</Breadcrumb.Item>
+            <Breadcrumb.Item active>Create User</Breadcrumb.Item>
           </Breadcrumb>
         </>
       }
     >
-      <DataTable />
+      <UserForm />
     </Panel>
   );
 };

@@ -34,7 +34,7 @@ export const appNavs = [
       {
         eventKey: 'users',
         title: 'Users',
-        to: '/table-members'
+        to: '/users'
       },
       {
         eventKey: 'students',

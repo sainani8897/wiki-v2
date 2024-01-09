@@ -41,6 +41,7 @@
     "@fullcalendar/interaction": "^5.11.3",
     "@fullcalendar/react": "^5.11.2",
     "@fullcalendar/timegrid": "^5.11.3",
+    "@reduxjs/toolkit": "^2.0.1",
     "@rsuite/icons": "^1.0.2",
     "apexcharts": "^3.35.4",
     "axios": "^1.4.0",

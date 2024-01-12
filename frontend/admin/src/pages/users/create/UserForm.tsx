@@ -39,12 +39,15 @@ const UserForm = () => {
   const [formValue, setFormValue] = React.useState({} as any);
   const [action, setAction] = React.useState('add');
   const [selectData, setRolesData] = React.useState([]);
+  const [selectedRoles, setSelectedRoles] = React.useState([]);
 
   const handleSubmit = e => {
     if (action === 'add') {
       create(e);
     }
-    update(e);
+    else{
+      update(e);
+    }
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,7 +60,8 @@ const UserForm = () => {
       pincode: formValue.pincode,
       state: formValue.state
     };
-    axiosInstance.post('/users', { payload })
+    payload.phone = payload.mobile;
+    axiosInstance.post('/users', payload)
       .then(response => {
         setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
@@ -80,7 +84,8 @@ const UserForm = () => {
       pincode: formValue.pincode,
       state: formValue.state
     };
-    axiosInstance.patch('/users', { payload })
+    payload.phone = payload.mobile;
+    axiosInstance.patch('/users', payload)
       .then(response => {
         setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
@@ -97,10 +102,12 @@ const UserForm = () => {
       .then(response => {
         const data = response?.data;
         console.log("response", data);
+        const allRoles = data.data?.docs[0]?.roles?.map(role=>role._id);
+        setSelectedRoles(allRoles);
         setFormValue({
           first_name: data.data?.docs[0]?.first_name ?? '',
           last_name: data.data?.docs[0]?.last_name ?? '',
-          mobile: data.data?.docs[0]?.mobile ?? '',
+          mobile: data.data?.docs[0]?.phone_number ?? '',
           email: data.data?.docs[0]?.email ?? '',
           address_line1: data.data?.docs[0]?.address?.address_line1 ?? '',
           address_line2: data.data?.docs[0]?.address?.address_line2 ?? '',
@@ -108,8 +115,9 @@ const UserForm = () => {
           state: data.data?.docs[0]?.address?.state ?? '',
           pincode: data.data?.docs[0]?.address?.pincode ?? '',
           status: data.data?.docs[0]?.status ?? '',
-          highest_qualification: data.data?.docs[0]?.highest_qualification ?? '',
+          roles:allRoles
         });
+        
         toaster.push(<Message showIcon type="success">{response.data.message}</Message>, { placement: 'topEnd', duration: 5000 });
       })
       .catch(error => {
@@ -125,12 +133,9 @@ const UserForm = () => {
         label: item.display_text,
         value: item._id,
       })) ?? [];
-
       console.log("selectDataRaw::::::",selectDataRaw);
       console.log("roles?.data::::::",roles?.data);
-      
       setRolesData(selectDataRaw);
-
     } catch (error) {
 
     }
@@ -173,6 +178,7 @@ const UserForm = () => {
           <Form.Control name="email" />
         </Form.Group>
 
+        <>
         <Form.Group controlId="Password">
           <Form.ControlLabel>Password</Form.ControlLabel>
           <Form.Control type='password' name="password" />
@@ -182,6 +188,7 @@ const UserForm = () => {
           <Form.ControlLabel>Confirm Password</Form.ControlLabel>
           <Form.Control type='password' name="password_confirmation" />
         </Form.Group>
+        </>
 
         <Form.Group controlId="mobile">
           <Form.ControlLabel>Mobile</Form.ControlLabel>
@@ -219,9 +226,9 @@ const UserForm = () => {
             const formData = formValue;
             formData.roles = value;
             setFormValue(formData);
-            console.log(formValue);
+            setSelectedRoles(formData.roles);
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-          }} data={selectData} 
+          }} value={selectedRoles} data={selectData} 
           />
         </Form.Group>
 

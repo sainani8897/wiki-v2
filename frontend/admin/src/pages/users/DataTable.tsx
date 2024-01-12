@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Input,
   InputGroup,
@@ -73,7 +73,7 @@ const DataTable = () => {
     const keys = checked ? data.map(item => item.id) : [];
     setCheckedKeys(keys);
   };
-  
+
   const handleCheck = (value, checked) => {
     const keys = checked ? [...checkedKeys, value] : checkedKeys.filter(item => item !== value);
     setCheckedKeys(keys);
@@ -108,21 +108,21 @@ const DataTable = () => {
     navigate(`/users/edit/${data._id}`);
   };
 
-  const deleteModal = (id:string) => {
+  const deleteModal = (id: string) => {
     setdeleteId(id);
     setShowDeleteModal(true);
   };
 
-  const reloadComponent = () =>{
+  const reloadComponent = () => {
     getData();
   };
 
   return (
     <>
       <Stack className="table-toolbar" justifyContent="space-between">
-        <Button appearance="primary" onClick={()=>{
-           navigate("/users/create");
-        }} > 
+        <Button appearance="primary" onClick={() => {
+          navigate("/users/create");
+        }} >
           Add User
         </Button>
         {/* onClick={() => setShowDrawer(true)} */}
@@ -156,7 +156,7 @@ const DataTable = () => {
           <Cell dataKey="_id" />
         </Column>
 
-       
+
         <Column width={80} align="center">
           <HeaderCell>Avatar</HeaderCell>
           <ImageCell dataKey="profile" />
@@ -183,7 +183,7 @@ const DataTable = () => {
           <Cell dataKey="user_type" />
         </Column>
 
-       
+
 
         {/* <Column width={100} sortable>
           <HeaderCell>Rating</HeaderCell>
@@ -193,10 +193,10 @@ const DataTable = () => {
             }
           </Cell>
         </Column> */}
-        
-        
 
-        
+
+
+
 
         <Column width={120}>
           <HeaderCell>
@@ -205,12 +205,17 @@ const DataTable = () => {
           <Cell className="link-group">
             {/* {rowData => rowData.parent_id?.category_name} */}
             {
-              rowData => (<ButtonToolbar>
-                <IconButton size="sm" color="blue" onClick={()=>{ onEdit(rowData) }} appearance="ghost" circle icon={<EditIcon />} />
-                <IconButton size="sm" onClick={()=>{
+              rowData => (
+              <ButtonToolbar>
+                <IconButton size="sm" color="blue" onClick={() => { onEdit(rowData) }} appearance="ghost" circle icon={<EditIcon />} />
+                {/* <IconButton size="sm" onClick={() => {
                   deleteModal(rowData._id);
-                }} color="red" appearance="ghost" circle icon={<TrashIcon />} />
-              </ButtonToolbar>)
+                }} color="red" appearance="ghost" circle icon={<TrashIcon />} /> */}
+              </ButtonToolbar>
+
+
+
+              )
             }
 
           </Cell>
@@ -239,7 +244,7 @@ const DataTable = () => {
       <DrawerView open={showDrawer} onClose={() => setShowDrawer(false)} />
 
       {/* Delete Modal */}
-      <DeleteModal open={showDeleteModal} deleteId={deleteId} onClose={() => setShowDeleteModal(false)} reload={()=>reloadComponent()} />
+      <DeleteModal open={showDeleteModal} deleteId={deleteId} onClose={() => setShowDeleteModal(false)} reload={() => reloadComponent()} />
     </>
   );
 };

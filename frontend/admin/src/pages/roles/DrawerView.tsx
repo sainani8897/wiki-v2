@@ -36,6 +36,7 @@ const DrawerView = (props: DrawerProps) => {
   const formRef = React.useRef();
   const [formError, setFormError] = React.useState({});
   const [formValue, setFormValue] = React.useState({} as any);
+  const [selectedPermissions, setSelectedPermissions] = React.useState([]);
 
   const handleCategoryChange = () => {
     console.log(formValue)
@@ -88,7 +89,9 @@ const DrawerView = (props: DrawerProps) => {
       // sort:category.sort ?? '',
       // parent_id:category?.parent_id?._id ?? '',
       // _id:category?._id ?? ''
-    })
+    });
+    const selPermissions = role?.permissions?.map(p=>p._id);
+    setSelectedPermissions(selPermissions);
   }, [customData]);
 
   const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
@@ -144,8 +147,10 @@ const DrawerView = (props: DrawerProps) => {
                 const formData = formValue;
                 formData.permissions = value
                 setFormValue(formData);
+                setSelectedPermissions(formData.permissions);
                 console.log(formValue)
               }} data={selectData} 
+              value={selectedPermissions}
               groupBy="role" style={{ width: '100%' }} />
             </Form.Group>
             <Form.Group controlId="selectPicker">

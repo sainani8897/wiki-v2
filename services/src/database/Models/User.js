@@ -46,7 +46,8 @@ const userSchema = new mongoose.Schema(
     },
     phone_number: {
       type: String,
-      unique: true
+      unique: true,
+      sparse: true
     },
     email_verfied: {
       type: Date

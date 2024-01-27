@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useEffect, SyntheticEvent } from 'react';
 import {
   Drawer,
@@ -39,16 +40,18 @@ const DrawerView = (props: DrawerProps) => {
   const [selectedPermissions, setSelectedPermissions] = React.useState([]);
 
   const handleCategoryChange = () => {
-    console.log(formValue)
-    formValue.name = slugify(formValue?.display_text || '', '_')
+    console.log(formValue);
+    formValue.name = slugify(formValue?.display_text || '', '_');
     setFormValue(formValue);
-  }
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     if (action === 'edit') {
-      update(e)
+      update(e);
     }
-    create(e);
+    else{
+      create(e);
+    }
   };
 
   const create = (event: SyntheticEvent) => {
@@ -57,7 +60,7 @@ const DrawerView = (props: DrawerProps) => {
         onClose?.(event);
         setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
-        reload()
+        reload();
       })
       .catch(error => {
         const error_msg = error?.response?.data?.message ?? "Oops Something went wrong";
@@ -67,12 +70,13 @@ const DrawerView = (props: DrawerProps) => {
 
 
   const update = (event: SyntheticEvent) => {
-    axiosInstance.patch('/roles', { payload: formValue })
+    const payload = formValue;
+    axiosInstance.patch('/roles', { payload })
       .then(response => {
         onClose?.(event);
         setFormValue({});
         toaster.push(<Message type="success">{response.data.message}</Message>);
-        reload()
+        reload();
       })
       .catch(error => {
         const error_msg = error?.response?.data?.message ?? "Oops Something went wrong";
@@ -81,11 +85,12 @@ const DrawerView = (props: DrawerProps) => {
   };
 
   useEffect(() => {
-    console.log("customData:", customData)
+    console.log("customData:", customData);
     setFormValue({
       display_text:role.display_text ?? '',
       name:role.name ?? '',
       status:role.status ?? '',
+      _id:role._id ?? null,
       // sort:category.sort ?? '',
       // parent_id:category?.parent_id?._id ?? '',
       // _id:category?._id ?? ''
@@ -103,8 +108,8 @@ const DrawerView = (props: DrawerProps) => {
   );
 
   function compare(a, b) {
-    let nameA = a.toUpperCase();
-    let nameB = b.toUpperCase();
+    const nameA = a.toUpperCase();
+    const nameB = b.toUpperCase();
 
     if (nameA < nameB) {
       return -1;
@@ -145,10 +150,10 @@ const DrawerView = (props: DrawerProps) => {
               <Form.ControlLabel>Permissions</Form.ControlLabel>
               <CheckPicker name='permissions' onSelect={value=>{
                 const formData = formValue;
-                formData.permissions = value
+                formData.permissions = value;
                 setFormValue(formData);
                 setSelectedPermissions(formData.permissions);
-                console.log(formValue)
+                console.log(formValue);
               }} data={selectData} 
               value={selectedPermissions}
               groupBy="role" style={{ width: '100%' }} />

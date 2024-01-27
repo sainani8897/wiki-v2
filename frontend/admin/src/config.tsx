@@ -5,6 +5,10 @@ import { MdFingerprint, MdDashboard, MdModeEditOutline } from 'react-icons/md';
 import CubesIcon from '@rsuite/icons/legacy/Cubes';
 import GridIcon from '@rsuite/icons/Grid';
 import PeoplesIcon from '@rsuite/icons/Peoples';
+import DocPassIcon from '@rsuite/icons/DocPass';
+import AddOutlineIcon from '@rsuite/icons/AddOutline';
+import ChangeListIcon from '@rsuite/icons/ChangeList';
+import CharacterAuthorize from '@rsuite/icons/CharacterAuthorize';
 
 export const appNavs = [
   {
@@ -44,13 +48,13 @@ export const appNavs = [
       {
         eventKey: 'Instructors',
         title: 'Instructors',
-        to: '/instuctors'
+        to: '/instructors'
       }
     ]
   },
   {
     eventKey: 'Roles Management',
-    icon: <Icon as={PeoplesIcon} />,
+    icon: <Icon as={CharacterAuthorize} />,
     title: 'Roles Management',
     to: '/roles',
     children: [
@@ -64,6 +68,27 @@ export const appNavs = [
         title: 'Permissions',
         to: '/permissions',
       },
+    ]
+  },
+  {
+    eventKey: 'course_management',
+    icon: <Icon as={DocPassIcon} />,
+    title: 'Course Management',
+    to: '/users',
+    children: [
+      {
+        eventKey: 'add_course',
+        title: 'Add Course',
+        to: '/create-course',
+        icon: <Icon as={AddOutlineIcon} />,
+      },
+      {
+        eventKey: 'view_course',
+        title: 'View Courses',
+        to: '/courses',
+        icon: <Icon as={ChangeListIcon} />,
+      },
+      
     ]
   },
   // {

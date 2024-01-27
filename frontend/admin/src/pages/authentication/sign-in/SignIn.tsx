@@ -3,6 +3,9 @@ import { Form, Button, Panel, Stack, Divider,Schema,Message,toaster } from 'rsui
 import { Link,useNavigate  } from 'react-router-dom';
 import axios from 'axios';
 import { localStorageService } from '@/utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../../../Auth/authAction';
+import {ThunkDispatch} from "@reduxjs/toolkit";
 
 
 const SignUp = () => {
@@ -10,22 +13,31 @@ const SignUp = () => {
   const formRef = React.useRef();
   const [formError, setFormError] = React.useState({});
   const [formValue, setFormValue] = React.useState({} as any);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { loading, userInfo, error, success } = useSelector(
+    (state) => state.auth
+  );
 
-  
   const handleSubmit = (e) => {
+    // dispatch(registerUser({ 
+    //   email:formValue.email,
+    //   password:formValue.password
+    // }));
     return axios
     .post(process.env.API_URL+'/login', {
       email:formValue.email,
       password:formValue.password
     })
     .then(res => {
+      
       localStorageService.set('token',res.data.token);
       localStorageService.set('refresh_token',res.data.refresh_token);
       navigate('/');
       
     }).catch(error => {
-      const error_msg = error?.response?.data?.message ?? "Oops Something went wrong";
-      toaster.push(<Message type="error">{error_msg}</Message>);
+      const errorMessage = error?.response?.data?.message ?? "Oops Something went wrong";
+      toaster.push(<Message type="error">{errorMessage}</Message>);
     });
     
   };

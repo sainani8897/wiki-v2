@@ -23,10 +23,14 @@ import FormWizardPage from './pages/forms/wizard';
 import CalendarPage from './pages/calendar';
 import { appNavs } from './config';
 import Users from './pages/users';
+import Instructors from './pages/instructors';
 import Students from './pages/students';
 import StudentsCreate from './pages/students/create';
+import CourseCreate from './pages/course/create';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import UserForm from './pages/users/create';
+import InstructorForm from './pages/instructors/create';
+import Course from './pages/Course';
 
 const AuthenticatedRoutes = ({ children }) => {
   // You can include a layout or additional components here if needed
@@ -70,8 +74,19 @@ const App = () => {
               <Route path="edit/:id" element={<UserForm />} />
               {/* <Route path="me" element={...} /> */}
             </Route>
-            <Route path="create-student" element={<StudentsCreate />} />
-            <Route path="update-student/:id" element={<StudentsCreate />} />
+            <Route path="/instructors">
+              <Route index element={<Instructors />} />
+              <Route path="create" element={<InstructorForm />} />
+              <Route path="edit/:id" element={<InstructorForm />} />
+              {/* <Route path="me" element={...} /> */}
+            </Route>
+            <Route path="/courses">
+              <Route index element={<Course />} />
+              <Route path="create" element={<InstructorForm />} />
+              <Route path="edit/:id" element={<InstructorForm />} />
+              {/* <Route path="me" element={...} /> */}
+            </Route>
+            <Route path="create-course" element={<CourseCreate />} />
             {/* <Route path="sign-in" element={<SignInPage />} />
             <Route path="sign-up" element={<SignUpPage />} /> */}
             <Route path="form-basic" element={<FormBasicPage />} />

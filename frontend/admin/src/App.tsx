@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import {BrowserRouter as Router,   Routes, Route } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
 import { CustomProvider } from 'rsuite';
 import enGB from 'rsuite/locales/en_GB';
@@ -36,6 +36,11 @@ const AuthenticatedRoutes = ({ children }) => {
   // You can include a layout or additional components here if needed
   return <div>{children}</div>;
 };
+
+interface RoutesProps {
+  children?: React.ReactNode;
+  location?: Partial<Location> | string;
+}
 
 const App = () => {
   // dotenv.config();
@@ -82,8 +87,8 @@ const App = () => {
             </Route>
             <Route path="/courses">
               <Route index element={<Course />} />
-              <Route path="create" element={<InstructorForm />} />
-              <Route path="edit/:id" element={<InstructorForm />} />
+              <Route path="create" element={<CourseCreate />} />
+              <Route path="edit/:id" element={<CourseCreate />} />
               {/* <Route path="me" element={...} /> */}
             </Route>
             <Route path="create-course" element={<CourseCreate />} />

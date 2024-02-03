@@ -8,7 +8,7 @@ exports.index = async function (req, res, next) {
     const options = {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
-      sort: { createdAt: -1 },
+      sort: { sort_order: 1 },
       populate: ['instructor', 'course']
     }
 

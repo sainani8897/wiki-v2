@@ -99,7 +99,7 @@ const DataTable = () => {
   }, [page, limit]);
 
   const onEdit = (data: any) => {
-    navigate(`/users/edit/${data._id}`);
+    navigate(`/courses/edit/${data._id}`);
   };
 
   const deleteModal = (id: string) => {

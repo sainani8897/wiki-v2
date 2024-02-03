@@ -8,6 +8,7 @@ import FormHeader from './FormHeader';
 import Textarea from '@/components/Textarea';
 import axiosInstance from '../../../interceptors/axios';
 import PageNextIcon from '@rsuite/icons/PageNext';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const BasicInfo = () => {
   const [type, setType] = useState('personal');
@@ -18,6 +19,10 @@ const BasicInfo = () => {
   const [selectedRoles, setSelectedRoles] = React.useState([]);
   const [selectData, setRolesData] = React.useState([]);
   const [selectInstructorsData, setInstructorsData] = React.useState([]);
+  const [action, setAction] = React.useState('add');
+
+  const navigate = useNavigate();
+  const { id } = useParams();
 
   /* Schema for validation */
   const model = Schema.Model({
@@ -34,8 +39,12 @@ const BasicInfo = () => {
       console.error('Form Error');
       return;
     }
-      alert("Called!");
+    if (action === 'add') {
       create(e);
+    }
+    else{
+      // update(e);
+    }
   };
 
   const getCategories = async () => {
@@ -77,9 +86,42 @@ const BasicInfo = () => {
   };
 
   useEffect(() => {
+    if (id) {
+      console.log("i am edit!!!!");
+      setAction('edit');
+      getData();
+    } else {
+      setAction('add');
+    }
     getCategories();
     getInstructors();
   }, []);
+
+
+  const getData = () => {
+    axiosInstance.get('/course', { params: { _id: id } })
+      .then(response => {
+        const data = response?.data;
+        console.log("response", data);
+        const allRoles = data.data?.docs[0]?.roles?.map(role=>role._id);
+        setSelectedRoles(allRoles);
+        setFormValue({
+          title: data.data?.docs[0]?.title ?? '',
+          slug: data.data?.docs[0]?.slug ?? '',
+          categories: data.data?.docs[0]?.categories ?? '',
+          instructor: data.data?.docs[0]?.instructor?._id ?? '',
+          course_price: data.data?.docs[0]?.course_price ?? '',
+          cut_off_price: data.data?.docs[0]?.cut_off_price ?? '',
+          description: data.data?.docs[0]?.description ?? '',
+          status: data.data?.docs[0]?.status ?? '',
+          tags: data.data?.docs[0]?.tags ?? '',
+        });;
+      })
+      .catch(error => {
+        const errorMsg = error?.response?.data?.message ?? "Oops Something went wrong";
+        toaster.push(<Message showIcon type="error">{errorMsg}</Message>, { placement: 'topEnd', duration: 5000 });
+      });
+  };
 
   return (
     // <Form>

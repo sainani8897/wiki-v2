@@ -3,7 +3,8 @@ import React from 'react';
 import { Col, Nav, Row } from 'rsuite';
 import BasicForm from './Basic';
 import PageContent from '@/components/PageContent';
-import {VscBook,VscVariableGroup   } from 'react-icons/vsc';
+import {VscBook,VscVariableGroup} from 'react-icons/vsc';
+import NewCourseBuilder from './NewCourseBuilder';
 
 const CustomNav = ({ active, onSelect, ...props }) => {
     return (
@@ -25,7 +26,7 @@ const Builder = () => {
             case 'course':
                 return <BasicForm />;
             default:
-                return null;
+                return <NewCourseBuilder/>;
         }
     };
 

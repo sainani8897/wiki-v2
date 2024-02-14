@@ -1,4 +1,4 @@
-const { Lecture } = require('../database/Models')
+const { Lecture, Section } = require('../database/Models')
 const { NotFoundException } = require('../exceptions')
 const { convertToSlug } = require('../helpers/helperFunctions')
 
@@ -63,6 +63,8 @@ exports.create = async function (req, res, next) {
     /** Basic Form */
     const payload = req.body.payload
 
+    const section = await Section.findById({ _id: payload.section })
+
     const lecture = await Lecture.create({
       status: payload.status,
       title: payload.title,
@@ -80,6 +82,9 @@ exports.create = async function (req, res, next) {
       created_by: req.user._id,
       org_id: req.user.org_id
     })
+
+    section.lectures.push(lecture)
+    await section.save()
 
     if (Array.isArray(payload.files)) {
       /** Files */

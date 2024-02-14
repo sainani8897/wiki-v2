@@ -58,7 +58,11 @@ const sectionSchema = new mongoose.Schema(
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
-    }
+    },
+    lectures: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Lecture'
+    }]
   },
   { timestamps: true },
   {

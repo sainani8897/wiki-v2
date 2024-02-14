@@ -16,7 +16,9 @@ import UserCircleIcon from '@rsuite/icons/legacy/UserCircleO';
 import AddOutlineIcon from '@rsuite/icons/AddOutline';
 import EditIcon from '@rsuite/icons/Edit';
 import TrashIcon from '@rsuite/icons/Trash';
+import RemindIcon from '@rsuite/icons/legacy/Remind';
 import { slugify } from '@/utils';
+import Quill from 'quill';
 
 const NewCourseBuilder = () => {
     const [type, setType] = useState('personal');
@@ -31,10 +33,17 @@ const NewCourseBuilder = () => {
     const [selectInstructorsData, setInstructorsData] = React.useState([]);
     const [sectionAction, setSectionAction] = React.useState('add');
     const [open, setOpen] = React.useState(false);
-    const [totalDocs,setTotalSections] = React.useState(0);
+    const [openLectureModel, setLectureModel] = React.useState(false);
+    const [openSectionDelModel, setSectionDelModel] = React.useState(false);
+    const [totalDocs, setTotalSections] = React.useState(0);
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
     const handleAddSectionModelOpen = () => setOpen(true);
     const handleAddSectionModelClose = () => setOpen(false);
+    const handleDeleteSectionModelOpen = () => setSectionDelModel(true);
+    const handleDeleteSectionModelClose = () => setSectionDelModel(false);
+    const handleAddLectureModelOpen = () => setLectureModel(true);
+    const handleAddLectureModelClose = () => setLectureModel(false);
+    const [deleteId, setDeleteId] = React.useState('');
 
     const navigate = useNavigate();
     const { id } = useParams();
@@ -108,16 +117,70 @@ const NewCourseBuilder = () => {
             });
     };
 
+    const updateSection = (_event: SyntheticEvent) => {
+        const payload = formValue;
+        payload.course = id;
+        payload.instructor = course?.instructor?._id;
+
+        axiosInstance.patch('/sections', { payload })
+            .then(response => {
+                setFormValue({});
+                handleAddSectionModelClose();
+                toaster.push(<Message type="success">{response.data.message}</Message>);
+                forceUpdate();
+            })
+            .catch(error => {
+                const errorMsg = error?.response?.data?.message ?? "Oops Something went wrong";
+                toaster.push(<Message type="error">{errorMsg}</Message>);
+            });
+    };
+
+
+    const setSectionDeleteModel = (deleteId: string) => {
+        handleDeleteSectionModelOpen();
+        setDeleteId(deleteId);
+    };
+
+    const onConfirmSectionDeletion = () => {
+        return axiosInstance.delete('/sections', {
+            method: 'delete',
+            data: {
+                _id: [deleteId]
+            }
+        })
+            .then(response => {
+                handleDeleteSectionModelClose();
+                forceUpdate();
+                toaster.push(<Message type="success">{response.data.message}</Message>);
+            })
+            .catch(error => {
+                const errorMsg = error?.response?.data?.message ?? "Oops Something went wrong";
+                toaster.push(<Message type="error">{errorMsg}</Message>);
+            });
+    };
+
     const handleSectionSubmit = e => {
         if (sectionAction === 'edit') {
-        //   update(e);
+            updateSection(e);
         }
-        else{
-          create(e);
+        else {
+            create(e);
         }
-      };
+    };
 
-   
+    const sectionEdit = (section: any): void => {
+        setSectionAction('edit');
+        setFormValue({
+            title: section.title ?? '',
+            description: section.description ?? '',
+            status: section.status ?? '',
+            sort_order: section.sort_order ?? '',
+            _id: section._id ?? null
+        });
+        handleAddSectionModelOpen();
+    };
+
+
     const data = [
         { text: 'collection0 item0', collection: 0 },
         { text: 'collection0 item1', collection: 0 },
@@ -170,7 +233,7 @@ const NewCourseBuilder = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const getData = () => {
-        axiosInstance.get('/sections', { params: { course: id,limit:50 } })
+        axiosInstance.get('/sections', { params: { course: id, limit: 50 } })
             .then(response => {
                 const data = response?.data;
                 console.log("Sections data:", data);
@@ -184,7 +247,7 @@ const NewCourseBuilder = () => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const getCourseData = ():void => {
+    const getCourseData = (): void => {
         axiosInstance.get('/course', { params: { course: id } })
             .then(response => {
                 const data = response?.data;
@@ -196,7 +259,7 @@ const NewCourseBuilder = () => {
             });
     };
 
-    const reloadComponent = ():void => {
+    const reloadComponent = (): void => {
         if (id) {
             getCourseData();
             getData();
@@ -211,45 +274,6 @@ const NewCourseBuilder = () => {
 
 
     return (
-
-        // <Form>
-        //   <FormHeader
-        //     title="Create new course"
-        //     description="Start fresh or use examples for seamless course creation success!."
-        //   />
-
-        //   <Stack spacing={30} style={{ margin: '60px 0' }}>
-        //     <RadioTile
-        //       icon={<Icon as={VscFile} />}
-        //       title="Create blank project"
-        //       value={type}
-        //       name="personal"
-        //       onChange={setType}
-        //     >
-        //       Create a blank project to house your files, plan your work, and collaborate on code, among
-        //       other things.
-        //     </RadioTile>
-        //     <RadioTile
-        //       icon={<Icon as={VscNotebookTemplate} />}
-        //       title="Create from template"
-        //       value={type}
-        //       name="brand"
-        //       onChange={setType}
-        //     >
-        //       Create a project pre-populated with the necessary files to get you started quickly.
-        //     </RadioTile>
-        //     <RadioTile
-        //       icon={<Icon as={VscRepoClone} />}
-        //       title="Import project"
-        //       value={type}
-        //       name="group"
-        //       onChange={setType}
-        //     >
-        //       Migrate your data from an external source like GitHub, Bitbucket, or another instance of
-        //       GitLab.
-        //     </RadioTile>
-        //   </Stack>
-        // </Form>
         <>
             <List bordered>
                 {sections.map((section: any, index) => (
@@ -257,18 +281,26 @@ const NewCourseBuilder = () => {
                         <Panel style={{ margin: "2px" }} className='mr-4' header={<Stack justifyContent="space-between">
                             <span>{section?.title}</span>
                             <ButtonGroup>
-                            <IconButton size="sm" appearance="primary" icon={< EditIcon/>} />
-                            <IconButton size="sm" appearance="primary" color='red' icon={<TrashIcon/>} />
+                                <IconButton size="sm" onClick={() => { sectionEdit(section); }} appearance="primary" icon={< EditIcon />} />
+                                <IconButton size="sm" onClick={() => { setSectionDeleteModel(section?._id); }} appearance="primary" color='red' icon={<TrashIcon />} />
                             </ButtonGroup>
                         </Stack>} >
-                            <List sortable onSort={handleSortEnd}>
-                                {data.map(({ text, collection, disabled }, index) => (
-                                    <List.Item key={text} index={index} disabled={disabled} collection={collection}>
-                                        <Panel style={{ margin: "2px" }} className='mr-4' header="Add Section" bordered >
-                                            <Placeholder.Paragraph />
+                            <List sortable onSort={handleSortEnd} >
+                                {section?.lectures.map(({ title, sort_order: sortOrder }, index) => (
+                                    <List.Item key={title} index={index} collection={sortOrder}>
+                                        <Panel style={{ margin: "2px" }} className='mr-4 mt-4' header={""} bordered >
+                                        <Stack justifyContent="space-between">
+                                            <span>{title}</span>
+                                            <ButtonGroup>
+                                                <IconButton size="sm" onClick={() => { sectionEdit(section); }} icon={< EditIcon />} />
+                                            </ButtonGroup>
+                                        </Stack>
                                         </Panel>
                                     </List.Item>
                                 ))}
+                                <ButtonToolbar className='mt-4'>
+                                    <IconButton appearance="ghost" onClick={() => handleAddLectureModelOpen()} icon={<AddOutlineIcon />} block>Add Lecture</IconButton>
+                                </ButtonToolbar>
                             </List>
                         </Panel>
                     </List.Item>
@@ -296,23 +328,27 @@ const NewCourseBuilder = () => {
                             <Form.Control name="title" />
                             <Form.HelpText>Course names must be unique.</Form.HelpText>
                         </Form.Group>
+                        <Form.Group controlId="description">
+                            <Form.ControlLabel>Description</Form.ControlLabel>
+                            <Form.Control name="description" accepter={Textarea} />
+                        </Form.Group>
                         <Form.Group controlId="checkPicker">
-                        <Form.ControlLabel>Status</Form.ControlLabel>
-                        <Form.Control
-                            name="status"
-                            accepter={SelectPicker}
-                            data={[
-                                {
-                                    label: 'Active',
-                                    value: "Active"
-                                }, {
-                                    label: 'In-Active',
-                                    value: "In-Active"
-                                }
-                            ]}
-                            block
-                        />
-                    </Form.Group>
+                            <Form.ControlLabel>Status</Form.ControlLabel>
+                            <Form.Control
+                                name="status"
+                                accepter={SelectPicker}
+                                data={[
+                                    {
+                                        label: 'Active',
+                                        value: "Active"
+                                    }, {
+                                        label: 'In-Active',
+                                        value: "In-Active"
+                                    }
+                                ]}
+                                block
+                            />
+                        </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -325,139 +361,78 @@ const NewCourseBuilder = () => {
                 </Modal.Footer>
             </Modal>
 
+            <Modal backdrop={true} keyboard={false} open={openSectionDelModel} onClose={handleDeleteSectionModelClose}>
+                <Modal.Header>
+                    <Modal.Title> Warning <RemindIcon style={{ color: '#ffb300', fontSize: 20, marginBottom: 2 }} /> </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    {/* <Placeholder.Paragraph /> */}
+                    {/* <TrashIcon color='red' className='text-center' style={{ fontSize: '5em'}} /> */}
+                    <h5> Are you sure you want to Delete this Record ?</h5>
+                    <p className='text-muted'>This action cannot be undone</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleDeleteSectionModelClose} appearance="subtle">
+                        Cancel
+                    </Button>
+                    <Button onClick={onConfirmSectionDeletion} appearance="primary">
+                        Yes, Delete
+                    </Button>
+
+                </Modal.Footer>
+            </Modal>
+
+            {/* Lecture Modal popup */}
+            <Modal overflow={true} open={openLectureModel} onClose={handleAddLectureModelClose}>
+                <Modal.Header>
+                    <Modal.Title></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form fluid ref={formRef} model={model} formValue={formValue} onChange={setFormValue} onSubmit={handleSectionSubmit}
+                        onCheck={setFormError}>
+                        <FormHeader
+                            title="Add Lecture"
+                            description="Add Content to your Lectures"
+                        />
+                        <Form.Group controlId="name">
+                            <Form.ControlLabel>Lecture Title</Form.ControlLabel>
+                            <Form.Control name="title" />
+                        </Form.Group>
+                        <Form.Group controlId="description">
+                            <Form.ControlLabel>Description</Form.ControlLabel>
+                            <Form.Control name="description" accepter={Textarea} />
+                        </Form.Group>
+                        <Form.Group controlId="checkPicker">
+                            <Form.ControlLabel>Status</Form.ControlLabel>
+                            <Form.Control
+                                name="status"
+                                accepter={SelectPicker}
+                                data={[
+                                    {
+                                        label: 'Active',
+                                        value: "Active"
+                                    }, {
+                                        label: 'In-Active',
+                                        value: "In-Active"
+                                    }
+                                ]}
+                                block
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleSectionSubmit} appearance="primary">
+                        Add
+                    </Button>
+                    <Button onClick={handleAddLectureModelClose} appearance="subtle">
+                        Cancel
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
         </>
-        // <Form fluid ref={formRef} model={model} formValue={formValue} onChange={setFormValue} onSubmit={handleSubmit}
-        // onCheck={setFormError}>
-        //   <FormHeader
-        //     title="Add Section"
-        //     description="Add new section to add your content."
-        //   />
-
-        //   <Form.Group controlId="name">
-        //     <Form.ControlLabel>Course Title</Form.ControlLabel>
-        //     <Form.Control name="title" />
-        //     <Form.HelpText>Course names must be unique.</Form.HelpText>
-        //   </Form.Group>
-
-        //   <Form.Group controlId="name">
-        //     <Form.ControlLabel>Slug</Form.ControlLabel>
-        //     <Form.Control name="slug" />
-        //     <Form.HelpText>Slug names must be unique.</Form.HelpText>
-        //   </Form.Group>
-
-        //   {/* <Form.Group controlId="url">
-        //   <Form.ControlLabel>Project URL</Form.ControlLabel>
-
-        //   <InputGroup style={{ width: '100%' }}>
-        //     <InputGroup.Addon>https://rsuitejs.com/</InputGroup.Addon>
-        //     <Form.Control name="url" />
-        //   </InputGroup>
-        //   <Form.HelpText>
-        //     Want to house several dependent projects under the same namespace? <a>Create a group.</a>
-        //   </Form.HelpText>
-        // </Form.Group> */}
-        //   <Form.Group controlId="checkPicker">
-        //     <Form.ControlLabel>Category</Form.ControlLabel>
-        //     <Form.Control
-        //       name="categories"
-        //       accepter={CheckPicker}
-        //       data={selectData}
-        //       block
-        //     />
-        //   </Form.Group>
-
-        //   <Form.Group controlId="checkPicker">
-        //     <Form.ControlLabel>Instructors</Form.ControlLabel>
-        //     <Form.Control
-        //       name="instructor"
-        //       accepter={SelectPicker}
-        //       data={selectInstructorsData}
-        //       block
-        //     />
-        //   </Form.Group>
-
-        //   <Form.Group controlId="checkPicker">
-        //     <Form.ControlLabel>Instructors</Form.ControlLabel>
-        //     <Form.Control
-        //       name="status"
-        //       accepter={SelectPicker}
-        //       data={[
-        //         {
-        //           label: 'Active',
-        //           value: "Active"
-        //         }, {
-        //           label: 'In-Active',
-        //           value: "In-Active"
-        //         }
-        //       ]}
-        //       block
-        //     />
-        //   </Form.Group>
-
-        //   <Form.Group controlId="description">
-        //     <Form.ControlLabel>Description</Form.ControlLabel>
-        //     <Form.Control name="description" accepter={Textarea} />
-        //   </Form.Group>
-
-        //   <Form.Group controlId="tags">
-        //     <Form.ControlLabel>Tags</Form.ControlLabel>
-        //     <Form.Control name="tags" accepter={TagInput} block />
-        //     <Form.HelpText>Press Enter to add a new keyword.</Form.HelpText>
-        //   </Form.Group>
-
-        //   <Form.Group controlId="InputNumber">
-        //     <Form.ControlLabel>Course Price</Form.ControlLabel>
-        //     <Form.Control name="course_price" accepter={InputNumber} />
-        //     <Form.HelpText>Course after discounted price.</Form.HelpText>
-        //   </Form.Group>
-        //   {/* <Form.Group controlId="InputNumber">
-        //       <Form.ControlLabel>InputNumber</Form.ControlLabel>
-        //       <Form.Control name="InputNumber" accepter={InputNumber} />
-        //   </Form.Group> */}
-
-        //   <Form.Group controlId="name">
-        //     <Form.ControlLabel>Cutt of Price</Form.ControlLabel>
-        //     <Form.Control name="cut_off_price" accepter={InputNumber} />
-        //     <Form.HelpText>Course Actual Price.</Form.HelpText>
-        //   </Form.Group>
-
-        //   {/* <Form.Group controlId="plan">
-        //     <Form.ControlLabel>Visibility Level</Form.ControlLabel>
-        //     <Stack spacing={10} direction="column" alignItems={'stretch'}>
-        //       <RadioTile
-        //         icon={<Icon as={VscLock} />}
-        //         title="Private"
-        //         value={level}
-        //         name="Private"
-        //         onChange={setLevel}
-        //       >
-        //         Project access must be granted explicitly to each user. If this project is part of a
-        //         group, access will be granted to members of the group.
-        //       </RadioTile>
-        //       <RadioTile
-        //         icon={<Icon as={VscWorkspaceTrusted} />}
-        //         title="Internal"
-        //         value={level}
-        //         name="Internal"
-        //         onChange={setLevel}
-        //       >
-        //         The project can be accessed by any logged in user except external users.
-        //       </RadioTile>
-        //     </Stack>
-        //   </Form.Group> */}
-        //   <Divider />
-        //   <Stack justifyContent="space-between">
-        //         <IconButton
-        //           icon={<PageNextIcon />}
-        //           placement="right"
-        //           appearance="primary"
-        //           type='submit'
-        //           onClick={() => handleSubmit}
-        //         >
-        //           Continue
-        //         </IconButton>
-        //     </Stack>
-        // </Form>
     );
 };
 

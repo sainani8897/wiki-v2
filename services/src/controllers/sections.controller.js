@@ -9,7 +9,7 @@ exports.index = async function (req, res, next) {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 10,
       sort: { sort_order: 1 },
-      populate: ['instructor', 'course']
+      populate: ['instructor', 'course', 'lectures']
     }
 
     const query = req.query

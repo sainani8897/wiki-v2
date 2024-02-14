@@ -64,6 +64,9 @@ exports.create = async function (req, res, next) {
     const payload = req.body.payload
 
     const section = await Section.findById({ _id: payload.section })
+    if (!section) {
+      throw new NotFoundException('No Section Data Found!');
+    }
 
     const lecture = await Lecture.create({
       status: payload.status,
@@ -102,6 +105,7 @@ exports.create = async function (req, res, next) {
     })
   } catch (error) {
     next(error)
+    console.error('Err:', error);
   }
 }
 

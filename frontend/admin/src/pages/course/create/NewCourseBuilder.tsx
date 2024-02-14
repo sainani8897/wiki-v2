@@ -25,13 +25,17 @@ const NewCourseBuilder = () => {
     const [level, setLevel] = React.useState('Private');
     const formRef = React.useRef();
     const [formError, setFormError] = React.useState({});
+    const [lectureformError, setlectureFormError] = React.useState({});
     const [formValue, setFormValue] = React.useState({} as any);
+    const [lectureformValue, setLectureFormValue] = React.useState({} as any);
     const [selectedRoles, setSelectedRoles] = React.useState([]);
     const [sections, setSectionsData] = React.useState([]);
     const [course, setCourseData] = React.useState({} as any);
     const [selectData, setRolesData] = React.useState([]);
     const [selectInstructorsData, setInstructorsData] = React.useState([]);
     const [sectionAction, setSectionAction] = React.useState('add');
+    const [lectureAction, setLectureAction] = React.useState('add');
+    const [sectionId, setSectionId] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const [openLectureModel, setLectureModel] = React.useState(false);
     const [openSectionDelModel, setSectionDelModel] = React.useState(false);
@@ -56,6 +60,11 @@ const NewCourseBuilder = () => {
         instructor: Schema.Types.StringType().isRequired('This field is required.'),
         course_price: Schema.Types.StringType().isRequired('This field is required.'),
         cut_off_price: Schema.Types.StringType().isRequired('This field is required.'),
+    });
+
+    /* Schema for validation */
+    const lectureModel = Schema.Model({
+        title: Schema.Types.StringType().isRequired('This field is required.')
     });
 
     const handleSubmit = e => {
@@ -117,6 +126,29 @@ const NewCourseBuilder = () => {
             });
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const lectureCreate = (_event: SyntheticEvent) => {
+        const payload = lectureformValue;
+        payload.course = id;
+        payload.instructor = course?.instructor?._id;
+        payload.sort_order = totalDocs + 1;
+        payload.section = sectionId;
+        payload.type = 'lesson';
+
+        axiosInstance.post('/lectures', { payload })
+            .then(response => {
+                setFormValue({});
+                handleAddSectionModelClose();
+                toaster.push(<Message type="success">{response.data.message}</Message>);
+                forceUpdate();
+            })
+            .catch(error => {
+                const errorMsg = error?.response?.data?.message ?? "Oops Something went wrong";
+                toaster.push(<Message type="error">{errorMsg}</Message>);
+            });
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const updateSection = (_event: SyntheticEvent) => {
         const payload = formValue;
         payload.course = id;
@@ -165,6 +197,15 @@ const NewCourseBuilder = () => {
         }
         else {
             create(e);
+        }
+    };
+
+    const handleLectureSubmit = e => {
+        if (lectureAction === 'edit') {
+            updateSection(e);
+        }
+        else {
+            lectureCreate(e);
         }
     };
 
@@ -289,17 +330,17 @@ const NewCourseBuilder = () => {
                                 {section?.lectures.map(({ title, sort_order: sortOrder }, index) => (
                                     <List.Item key={title} index={index} collection={sortOrder}>
                                         <Panel style={{ margin: "2px" }} className='mr-4 mt-4' header={""} bordered >
-                                        <Stack justifyContent="space-between">
-                                            <span>{title}</span>
-                                            <ButtonGroup>
-                                                <IconButton size="sm" onClick={() => { sectionEdit(section); }} icon={< EditIcon />} />
-                                            </ButtonGroup>
-                                        </Stack>
+                                            <Stack justifyContent="space-between">
+                                                <span>{title}</span>
+                                                <ButtonGroup>
+                                                    <IconButton size="sm" onClick={() => { sectionEdit(section); }} icon={< EditIcon />} />
+                                                </ButtonGroup>
+                                            </Stack>
                                         </Panel>
                                     </List.Item>
                                 ))}
                                 <ButtonToolbar className='mt-4'>
-                                    <IconButton appearance="ghost" onClick={() => handleAddLectureModelOpen()} icon={<AddOutlineIcon />} block>Add Lecture</IconButton>
+                                    <IconButton appearance="ghost" onClick={() => { handleAddLectureModelOpen(); setSectionId(section._id); }} icon={<AddOutlineIcon />} block>Add Lecture</IconButton>
                                 </ButtonToolbar>
                             </List>
                         </Panel>
@@ -389,7 +430,7 @@ const NewCourseBuilder = () => {
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form fluid ref={formRef} model={model} formValue={formValue} onChange={setFormValue} onSubmit={handleSectionSubmit}
+                    <Form fluid ref={formRef} model={lectureModel} formValue={lectureformValue} onChange={setLectureFormValue} onSubmit={handleLectureSubmit}
                         onCheck={setFormError}>
                         <FormHeader
                             title="Add Lecture"
@@ -402,6 +443,33 @@ const NewCourseBuilder = () => {
                         <Form.Group controlId="description">
                             <Form.ControlLabel>Description</Form.ControlLabel>
                             <Form.Control name="description" accepter={Textarea} />
+                        </Form.Group>
+                        <Form.Group controlId="checkPicker">
+                            <Form.ControlLabel>Content Type</Form.ControlLabel>
+                            <Form.Control
+                                name="content_type"
+                                accepter={SelectPicker}
+                                data={[{
+                                        label: 'Text',
+                                        value: "text"
+                                    },
+                                    {
+                                        label: 'Self Hosted',
+                                        value: "Self Hosted"
+                                    }, {
+                                        label: 'YouTube',
+                                        value: "YouTube"
+                                    }, {
+                                        label: 'Vimeo',
+                                        value: "Vimeo"
+                                    }
+                                ]}
+                                block
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="Content">
+                            <Form.ControlLabel>Content</Form.ControlLabel>
+                            <Form.Control name="content" accepter={Textarea} />
                         </Form.Group>
                         <Form.Group controlId="checkPicker">
                             <Form.ControlLabel>Status</Form.ControlLabel>
@@ -423,7 +491,7 @@ const NewCourseBuilder = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={handleSectionSubmit} appearance="primary">
+                    <Button onClick={handleLectureSubmit} appearance="primary">
                         Add
                     </Button>
                     <Button onClick={handleAddLectureModelClose} appearance="subtle">

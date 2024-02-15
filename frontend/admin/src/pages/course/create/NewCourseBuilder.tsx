@@ -134,11 +134,10 @@ const NewCourseBuilder = () => {
         payload.sort_order = totalDocs + 1;
         payload.section = sectionId;
         payload.type = 'lesson';
-
         axiosInstance.post('/lectures', { payload })
             .then(response => {
                 setFormValue({});
-                handleAddSectionModelClose();
+                handleAddLectureModelClose();
                 toaster.push(<Message type="success">{response.data.message}</Message>);
                 forceUpdate();
             })
@@ -158,6 +157,22 @@ const NewCourseBuilder = () => {
             .then(response => {
                 setFormValue({});
                 handleAddSectionModelClose();
+                toaster.push(<Message type="success">{response.data.message}</Message>);
+                forceUpdate();
+            })
+            .catch(error => {
+                const errorMsg = error?.response?.data?.message ?? "Oops Something went wrong";
+                toaster.push(<Message type="error">{errorMsg}</Message>);
+            });
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const lectureUpdate = (_event: SyntheticEvent) => {
+        const payload = lectureformValue;
+        axiosInstance.patch('/lectures', { payload })
+            .then(response => {
+                setFormValue({});
+                handleAddLectureModelClose();
                 toaster.push(<Message type="success">{response.data.message}</Message>);
                 forceUpdate();
             })
@@ -202,7 +217,7 @@ const NewCourseBuilder = () => {
 
     const handleLectureSubmit = e => {
         if (lectureAction === 'edit') {
-            updateSection(e);
+            lectureUpdate(e);
         }
         else {
             lectureCreate(e);
@@ -219,6 +234,12 @@ const NewCourseBuilder = () => {
             _id: section._id ?? null
         });
         handleAddSectionModelOpen();
+    };
+
+    const lectureEdit = (lecture: any): void => {
+        setLectureAction('edit');
+        setLectureFormValue(lecture);
+        handleAddLectureModelOpen();
     };
 
 
@@ -327,13 +348,13 @@ const NewCourseBuilder = () => {
                             </ButtonGroup>
                         </Stack>} >
                             <List sortable onSort={handleSortEnd} >
-                                {section?.lectures.map(({ title, sort_order: sortOrder }, index) => (
+                                {section?.lectures.map(({ title, sort_order: sortOrder, status, content_type,type, content, description,section, instructor, course,_id }, index) => (
                                     <List.Item key={title} index={index} collection={sortOrder}>
                                         <Panel style={{ margin: "2px" }} className='mr-4 mt-4' header={""} bordered >
                                             <Stack justifyContent="space-between">
                                                 <span>{title}</span>
                                                 <ButtonGroup>
-                                                    <IconButton size="sm" onClick={() => { sectionEdit(section); }} icon={< EditIcon />} />
+                                                    <IconButton size="sm" onClick={() => { lectureEdit({ title, sort_order: sortOrder, status, content, content_type, description,section, instructor, course,type,_id }); }} icon={< EditIcon />} />
                                                 </ButtonGroup>
                                             </Stack>
                                         </Panel>
@@ -425,7 +446,7 @@ const NewCourseBuilder = () => {
             </Modal>
 
             {/* Lecture Modal popup */}
-            <Modal overflow={true} open={openLectureModel} onClose={handleAddLectureModelClose}>
+            <Modal overflow={true} backdrop={'static'} open={openLectureModel} onClose={handleAddLectureModelClose}>
                 <Modal.Header>
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
@@ -450,19 +471,19 @@ const NewCourseBuilder = () => {
                                 name="content_type"
                                 accepter={SelectPicker}
                                 data={[{
-                                        label: 'Text',
-                                        value: "text"
-                                    },
-                                    {
-                                        label: 'Self Hosted',
-                                        value: "Self Hosted"
-                                    }, {
-                                        label: 'YouTube',
-                                        value: "YouTube"
-                                    }, {
-                                        label: 'Vimeo',
-                                        value: "Vimeo"
-                                    }
+                                    label: 'Text',
+                                    value: "text"
+                                },
+                                {
+                                    label: 'Self Hosted',
+                                    value: "Self Hosted"
+                                }, {
+                                    label: 'YouTube',
+                                    value: "YouTube"
+                                }, {
+                                    label: 'Vimeo',
+                                    value: "Vimeo"
+                                }
                                 ]}
                                 block
                             />

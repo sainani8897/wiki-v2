@@ -11,6 +11,7 @@
     "storge-link": "node src/config/services/strorageSymlink.js"
   },
   "author": "Sainath Dekonda",
+  "private": true,
   "license": "ISC",
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
@@ -32,5 +33,9 @@
     "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
     "eslint-plugin-promise": "^6.0.0",
     "nodemon": "^3.0.1"
-  }
+  },
+  "workspaces": [
+    "forntend/*",
+    "services"
+  ]
 }

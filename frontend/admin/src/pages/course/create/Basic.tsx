@@ -30,8 +30,8 @@ const BasicInfo = () => {
     slug: Schema.Types.StringType().isRequired('This field is required.'),
     categories: Schema.Types.ArrayType().isRequired('This field is required.'),
     instructor: Schema.Types.StringType().isRequired('This field is required.'),
-    course_price: Schema.Types.StringType().isRequired('This field is required.'),
-    cut_off_price: Schema.Types.StringType().isRequired('This field is required.'),
+    course_price: Schema.Types.NumberType().isRequired('This field is required.'),
+    cut_off_price: Schema.Types.NumberType().isRequired('This field is required.'),
   });
 
   const handleSubmit = e => {
@@ -43,7 +43,7 @@ const BasicInfo = () => {
       create(e);
     }
     else{
-      // update(e);
+      //update(e);
     }
   };
 

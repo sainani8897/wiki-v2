@@ -19,6 +19,8 @@ import TrashIcon from '@rsuite/icons/Trash';
 import RemindIcon from '@rsuite/icons/legacy/Remind';
 import { slugify } from '@/utils';
 import Quill from 'quill';
+import { CKEditor, CodeBlock } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const NewCourseBuilder = () => {
     const [type, setType] = useState('personal');
@@ -39,6 +41,7 @@ const NewCourseBuilder = () => {
     const [open, setOpen] = React.useState(false);
     const [openLectureModel, setLectureModel] = React.useState(false);
     const [openSectionDelModel, setSectionDelModel] = React.useState(false);
+    const [openLectureDelModel, setLectureDelModel] = React.useState(false);
     const [totalDocs, setTotalSections] = React.useState(0);
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
     const handleAddSectionModelOpen = () => setOpen(true);
@@ -47,7 +50,10 @@ const NewCourseBuilder = () => {
     const handleDeleteSectionModelClose = () => setSectionDelModel(false);
     const handleAddLectureModelOpen = () => setLectureModel(true);
     const handleAddLectureModelClose = () => setLectureModel(false);
+    const handleDeleteLectureModelOpen = () => setLectureDelModel(true);
+    const handleDeleteLectureModelClose = () => setLectureDelModel(false);
     const [deleteId, setDeleteId] = React.useState('');
+    const [deleteLectureId, setDeleteLectureId] = React.useState('');
 
     const navigate = useNavigate();
     const { id } = useParams();
@@ -188,6 +194,11 @@ const NewCourseBuilder = () => {
         setDeleteId(deleteId);
     };
 
+    const setLectureDeleteModel = (deleteId: string) => {
+        handleDeleteLectureModelOpen();
+        setDeleteLectureId(deleteId);
+    };
+
     const onConfirmSectionDeletion = () => {
         return axiosInstance.delete('/sections', {
             method: 'delete',
@@ -197,6 +208,24 @@ const NewCourseBuilder = () => {
         })
             .then(response => {
                 handleDeleteSectionModelClose();
+                forceUpdate();
+                toaster.push(<Message type="success">{response.data.message}</Message>);
+            })
+            .catch(error => {
+                const errorMsg = error?.response?.data?.message ?? "Oops Something went wrong";
+                toaster.push(<Message type="error">{errorMsg}</Message>);
+            });
+    };
+
+    const onConfirmLectureDeletion = () => {
+        return axiosInstance.delete('/lectures', {
+            method: 'delete',
+            data: {
+                _id: [deleteLectureId]
+            }
+        })
+            .then(response => {
+                handleDeleteLectureModelClose();
                 forceUpdate();
                 toaster.push(<Message type="success">{response.data.message}</Message>);
             })
@@ -348,20 +377,21 @@ const NewCourseBuilder = () => {
                             </ButtonGroup>
                         </Stack>} >
                             <List sortable onSort={handleSortEnd} >
-                                {section?.lectures.map(({ title, sort_order: sortOrder, status, content_type,type, content, description,section, instructor, course,_id }, index) => (
+                                {section?.lectures.map(({ title, sort_order: sortOrder, status, content_type, type, content, description, section, instructor, course, _id }, index) => (
                                     <List.Item key={title} index={index} collection={sortOrder}>
                                         <Panel style={{ margin: "2px" }} className='mr-4 mt-4' header={""} bordered >
                                             <Stack justifyContent="space-between">
                                                 <span>{title}</span>
                                                 <ButtonGroup>
-                                                    <IconButton size="sm" onClick={() => { lectureEdit({ title, sort_order: sortOrder, status, content, content_type, description,section, instructor, course,type,_id }); }} icon={< EditIcon />} />
+                                                    <IconButton size="sm" onClick={() => { lectureEdit({ title, sort_order: sortOrder, status, content, content_type, description, section, instructor, course, type, _id }); }} icon={< EditIcon />} />
+                                                    <IconButton size="sm" onClick={() => { setLectureDeleteModel(_id); }} icon={<TrashIcon />} />
                                                 </ButtonGroup>
                                             </Stack>
                                         </Panel>
                                     </List.Item>
                                 ))}
                                 <ButtonToolbar className='mt-4'>
-                                    <IconButton appearance="ghost" onClick={() => { handleAddLectureModelOpen(); setSectionId(section._id); }} icon={<AddOutlineIcon />} block>Add Lecture</IconButton>
+                                    <IconButton appearance="ghost" onClick={() => { setLectureFormValue({}); handleAddLectureModelOpen(); setSectionId(section._id); }} icon={<AddOutlineIcon />} block>Add Lecture</IconButton>
                                 </ButtonToolbar>
                             </List>
                         </Panel>
@@ -370,11 +400,11 @@ const NewCourseBuilder = () => {
             </List>
 
             <ButtonToolbar>
-                <IconButton appearance="ghost" onClick={() => handleAddSectionModelOpen()} icon={<AddOutlineIcon />} block>Add Section</IconButton>
+                <IconButton appearance="ghost" onClick={() => { setFormValue({}); handleAddSectionModelOpen(); }} icon={<AddOutlineIcon />} block>Add Section</IconButton>
             </ButtonToolbar>
 
             {/* Model Starts Here */}
-            <Modal overflow={true} open={open} onClose={handleAddSectionModelClose}>
+            <Modal size="lg" backdrop={true} overflow={true} open={open} onClose={handleAddSectionModelClose}>
                 <Modal.Header>
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
@@ -446,7 +476,7 @@ const NewCourseBuilder = () => {
             </Modal>
 
             {/* Lecture Modal popup */}
-            <Modal overflow={true} backdrop={'static'} open={openLectureModel} onClose={handleAddLectureModelClose}>
+            <Modal size="lg" overflow={true} backdrop={'static'} open={openLectureModel} onClose={handleAddLectureModelClose}>
                 <Modal.Header>
                     <Modal.Title></Modal.Title>
                 </Modal.Header>
@@ -488,9 +518,29 @@ const NewCourseBuilder = () => {
                                 block
                             />
                         </Form.Group>
-                        <Form.Group controlId="Content">
+                        <Form.Group controlId="checkPicker">
                             <Form.ControlLabel>Content</Form.ControlLabel>
-                            <Form.Control name="content" accepter={Textarea} />
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={lectureformValue.content ?? ''}
+                                config={{
+                                    height : '25em'
+                                }}
+                                onReady={editor => {
+                                    // You can store the "editor" and use when it is needed.
+                                    console.log('Editor is ready to use!', editor);
+                                }}
+                                onChange={(event) => {
+                                    console.log(event);
+                                }}
+                                onBlur={(event, editor) => {
+                                    lectureformValue.content = editor.getData();
+                                    setLectureFormValue(lectureformValue);
+                                }}
+                                onFocus={(event, editor) => {
+                                    console.log('Focus.', editor);
+                                }}
+                            />
                         </Form.Group>
                         <Form.Group controlId="checkPicker">
                             <Form.ControlLabel>Status</Form.ControlLabel>
@@ -518,6 +568,28 @@ const NewCourseBuilder = () => {
                     <Button onClick={handleAddLectureModelClose} appearance="subtle">
                         Cancel
                     </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal backdrop={true} keyboard={false} open={openLectureDelModel} onClose={handleDeleteLectureModelClose}>
+                <Modal.Header>
+                    <Modal.Title> Warning <RemindIcon style={{ color: '#ffb300', fontSize: 20, marginBottom: 2 }} /> </Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    {/* <Placeholder.Paragraph /> */}
+                    {/* <TrashIcon color='red' className='text-center' style={{ fontSize: '5em'}} /> */}
+                    <h5> Are you sure you want to Delete this Record ?</h5>
+                    <p className='text-muted'>This action cannot be undone</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleDeleteLectureModelClose} appearance="subtle">
+                        Cancel
+                    </Button>
+                    <Button onClick={onConfirmLectureDeletion} appearance="primary">
+                        Yes, Delete
+                    </Button>
+
                 </Modal.Footer>
             </Modal>
 

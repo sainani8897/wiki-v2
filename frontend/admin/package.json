@@ -36,6 +36,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.18.9",
+    "@ckeditor/ckeditor5-build-classic": "^41.1.0",
+    "@ckeditor/ckeditor5-code-block": "^41.1.0",
+    "@ckeditor/ckeditor5-react": "^6.2.0",
     "@faker-js/faker": "^7.4.0",
     "@fullcalendar/daygrid": "^5.11.3",
     "@fullcalendar/interaction": "^5.11.3",

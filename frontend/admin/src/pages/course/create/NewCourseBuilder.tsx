@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // eslint-disable-next-line no-use-before-define
 import React, { SyntheticEvent, useEffect, useReducer, useState } from 'react';
-import { Button, ButtonGroup, ButtonToolbar, CheckPicker, Divider, FlexboxGrid, Form, IconButton, InputGroup, InputNumber, List, Message, Modal, Panel, Placeholder, Schema, SelectPicker, Stack, TagInput, toaster } from 'rsuite';
+import { Button, ButtonGroup, ButtonToolbar, CheckPicker, Divider, Dropdown, FlexboxGrid, Form, IconButton, InputGroup, InputNumber, List, Message, Modal, Panel, Placeholder, Schema, SelectPicker, Stack, TagInput, Uploader, toaster } from 'rsuite';
 import RadioTile from '@/components/RadioTile';
 import { Icon } from '@rsuite/icons';
 import { VscNotebookTemplate, VscRepoClone, VscFile, VscLock, VscWorkspaceTrusted, VscBook } from 'react-icons/vsc';
@@ -21,6 +21,8 @@ import { slugify } from '@/utils';
 import Quill from 'quill';
 import { CKEditor, CodeBlock } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import PlusIcon from '@rsuite/icons/Plus';
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const NewCourseBuilder = () => {
     const [type, setType] = useState('personal');
@@ -58,6 +60,58 @@ const NewCourseBuilder = () => {
     const navigate = useNavigate();
     const { id } = useParams();
 
+    const renderContentType = (contentType: string) => {
+        switch (contentType) {
+            case 'text':
+                return (
+                    <Form.Group controlId="content">
+                        <Form.ControlLabel>Content</Form.ControlLabel>
+                        <CKEditor
+                            editor={ClassicEditor}
+                            data={lectureformValue.content ?? ''}
+                            onReady={editor => {
+                                // You can store the "editor" and use when it is needed.
+                                console.log('Editor is ready to use!', editor);
+                            }}
+                            onChange={event => {
+                                console.log(event);
+                            }}
+                            onBlur={(_event, editor) => {
+                                lectureformValue.content = editor.getData();
+                                setLectureFormValue(lectureformValue);
+                            }}
+                            onFocus={(_event, editor) => {
+                                console.log('Focus.', editor);
+                            }}
+                        />
+                    </Form.Group>
+                );
+            case 'youtube':
+                return (
+                    <Form.Group controlId="content">
+                        <Form.ControlLabel>YouTube</Form.ControlLabel>
+                        <Form.Control name="content" />
+                        <Form.HelpText>Video URL.</Form.HelpText>
+                    </Form.Group>
+                );
+            case 'vimeo':
+                return (
+                    <Form.Group controlId="content">
+                        <Form.ControlLabel>Vimeo</Form.ControlLabel>
+                        <Form.Control name="content" />
+                        <Form.HelpText>Video URL.</Form.HelpText>
+                    </Form.Group>
+                );
+            case 'self_hosted':
+                return (<Form.Group controlId="content">
+                    <Form.ControlLabel>Self Hosted</Form.ControlLabel>
+                    <Form.Control name="content" accepter={Uploader} />
+                </Form.Group>);
+            default:
+                return (<span>NA</span>);
+        }
+    };
+
     /* Schema for validation */
     const model = Schema.Model({
         title: Schema.Types.StringType().isRequired('This field is required.'),
@@ -72,45 +126,6 @@ const NewCourseBuilder = () => {
     const lectureModel = Schema.Model({
         title: Schema.Types.StringType().isRequired('This field is required.')
     });
-
-    const handleSubmit = e => {
-        if (!formRef.current.check()) {
-            console.error('Form Error');
-            return;
-        }
-        if (action === 'add') {
-            create(e);
-        }
-        else {
-            // update(e);
-        }
-    };
-
-    const getCategories = async () => {
-        try {
-            const { data: categories } = await axiosInstance.get('/categories');
-            const selectDataRaw = categories?.data?.docs?.map(item => ({
-                label: item.category_name,
-                value: item._id,
-            })) ?? [];
-            setRolesData(selectDataRaw);
-        } catch (error) {
-
-        }
-    };
-
-    const getInstructors = async () => {
-        try {
-            const { data: users } = await axiosInstance.get('/users');
-            const selectDataRaw = users?.data?.docs?.map(item => ({
-                label: item.name,
-                value: item._id,
-            })) ?? [];
-            setInstructorsData(selectDataRaw);
-        } catch (error) {
-
-        }
-    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const create = (_event: SyntheticEvent) => {
@@ -375,11 +390,21 @@ const NewCourseBuilder = () => {
                                 <IconButton size="sm" onClick={() => { sectionEdit(section); }} appearance="primary" icon={< EditIcon />} />
                                 <IconButton size="sm" onClick={() => { setSectionDeleteModel(section?._id); }} appearance="primary" color='red' icon={<TrashIcon />} />
                             </ButtonGroup>
+                            {/* <IconButton icon={<BsThreeDotsVertical />} appearance="default" />
+                            <Dropdown title="Dropdown">
+                                <Dropdown.Item>New File</Dropdown.Item>
+                                <Dropdown.Item>New File with Current Profile</Dropdown.Item>
+                                <Dropdown.Item>Download As...</Dropdown.Item>
+                                <Dropdown.Item>Export PDF</Dropdown.Item>
+                                <Dropdown.Item>Export HTML</Dropdown.Item>
+                                <Dropdown.Item>Settings</Dropdown.Item>
+                                <Dropdown.Item>About</Dropdown.Item>
+                            </Dropdown> */}
                         </Stack>} >
-                            <List sortable onSort={handleSortEnd} >
+                            <List sortable onSort={handleSortEnd} bordered>
                                 {section?.lectures.map(({ title, sort_order: sortOrder, status, content_type, type, content, description, section, instructor, course, _id }, index) => (
                                     <List.Item key={title} index={index} collection={sortOrder}>
-                                        <Panel style={{ margin: "2px" }} className='mr-4 mt-4' header={""} bordered >
+                                        <Panel style={{ margin: "2px" }} className='mt-4' header={""} >
                                             <Stack justifyContent="space-between">
                                                 <span>{title}</span>
                                                 <ButtonGroup>
@@ -390,17 +415,21 @@ const NewCourseBuilder = () => {
                                         </Panel>
                                     </List.Item>
                                 ))}
-                                <ButtonToolbar className='mt-4'>
-                                    <IconButton appearance="ghost" onClick={() => { setLectureFormValue({}); handleAddLectureModelOpen(); setSectionId(section._id); }} icon={<AddOutlineIcon />} block>Add Lecture</IconButton>
-                                </ButtonToolbar>
+
                             </List>
+                            <ButtonToolbar style={{ margin: "10px", }} >
+                                <IconButton appearance="primary" size='xs' onClick={() => { setLectureFormValue({}); handleAddLectureModelOpen(); setSectionId(section._id); }} icon={<PlusIcon />} >Add Lecture</IconButton>
+                                {/* <IconButton appearance="primary" color="green" icon={<PlusIcon />}>
+                                        Component
+                                    </IconButton> */}
+                            </ButtonToolbar>
                         </Panel>
                     </List.Item>
                 ))}
             </List>
 
-            <ButtonToolbar>
-                <IconButton appearance="ghost" onClick={() => { setFormValue({}); handleAddSectionModelOpen(); }} icon={<AddOutlineIcon />} block>Add Section</IconButton>
+            <ButtonToolbar style={{ margin: "10px" }}>
+                <IconButton appearance="ghost" onClick={() => { setFormValue({}); handleAddSectionModelOpen(); }} block>Add Section</IconButton>
             </ButtonToolbar>
 
             {/* Model Starts Here */}
@@ -506,42 +535,41 @@ const NewCourseBuilder = () => {
                                 },
                                 {
                                     label: 'Self Hosted',
-                                    value: "Self Hosted"
+                                    value: "self_hosted"
                                 }, {
                                     label: 'YouTube',
-                                    value: "YouTube"
+                                    value: "youtube"
                                 }, {
                                     label: 'Vimeo',
-                                    value: "Vimeo"
+                                    value: "vimeo"
                                 }
                                 ]}
                                 block
                             />
                         </Form.Group>
-                        <Form.Group controlId="checkPicker">
+                        {/* <Form.Group controlId="content_text">
                             <Form.ControlLabel>Content</Form.ControlLabel>
                             <CKEditor
                                 editor={ClassicEditor}
                                 data={lectureformValue.content ?? ''}
-                                config={{
-                                    height : '25em'
-                                }}
                                 onReady={editor => {
                                     // You can store the "editor" and use when it is needed.
                                     console.log('Editor is ready to use!', editor);
                                 }}
-                                onChange={(event) => {
+                                onChange={event => {
                                     console.log(event);
                                 }}
-                                onBlur={(event, editor) => {
+                                onBlur={(_event, editor) => {
                                     lectureformValue.content = editor.getData();
                                     setLectureFormValue(lectureformValue);
                                 }}
-                                onFocus={(event, editor) => {
+                                onFocus={(_event, editor) => {
                                     console.log('Focus.', editor);
                                 }}
                             />
-                        </Form.Group>
+                        </Form.Group> */}
+                        {renderContentType(lectureformValue?.content_type)}
+
                         <Form.Group controlId="checkPicker">
                             <Form.ControlLabel>Status</Form.ControlLabel>
                             <Form.Control

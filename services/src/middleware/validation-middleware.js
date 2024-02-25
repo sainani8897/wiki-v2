@@ -732,7 +732,7 @@ exports.lectureRules = (req, res, next) => {
     'payload.course': 'required',
     'payload.section': 'required',
     'payload.type': 'required|in:lesson,quiz',
-    'payload.content_type': 'required|in:text,audio,video,docs,file',
+    'payload.content_type': 'required|in:text,audio,video,docs,file,self_hosted,youtube,vimeo',
     'payload.content': 'required',
     'payload.status': 'required|string',
     'payload.sort_order': 'required|numeric'

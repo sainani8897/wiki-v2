@@ -533,6 +533,39 @@ exports.invoiceRules = (req, res, next) => {
   })
 }
 
+exports.batchRules = (req, res, next) => {
+  let validationRule = {
+    'payload.course': 'required',
+    'payload.startDate': 'required|date',
+    'payload.name': 'required',
+    'payload.status': 'required',
+    'payload.endDate': 'required|date',
+    'payload.students': 'required|array',
+    'payload.instructors': 'required|array'
+  }
+
+  if (req.method === 'PATCH') {
+    validationRule['payload._id'] = ['required', 'regex:/^[0-9a-fA-F]{24}$/']
+  }
+
+  if (req.method === 'DELETE') {
+    validationRule = {
+      _id: 'required|array'
+    }
+  }
+
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      throw new ValidationException(
+        Object.values(err.all())[0][0] ?? 'Validation Failed Bad Request!',
+        err
+      )
+    } else {
+      next()
+    }
+  })
+}
+
 exports.paymentRules = (req, res, next) => {
   let validationRule = {
     'payload.payment_no': 'required',

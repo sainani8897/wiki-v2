@@ -22,6 +22,7 @@ const organization = require('./organization')
 const course = require('./course')
 const sections = require('./sections')
 const lectures = require('./lectures')
+const batch = require('./batch')
 /** Home Route */
 Routes.get('/', function (req, res) {
   res.send('Home api page')
@@ -92,5 +93,8 @@ Routes.use('/sections', authenticateToken, sections)
 
 /* Lecture Controller */
 Routes.use('/lectures', authenticateToken, lectures)
+
+/* Batch Controller */
+Routes.use('/batch', authenticateToken, batch)
 
 module.exports = Routes

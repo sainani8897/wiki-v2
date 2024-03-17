@@ -1,7 +1,7 @@
 # Use the official Node.js image as the base image
 # Install dependencies only when needed
 # FROM --platform=linux/x86-64 node:14-slim AS deps
-FROM node:16
+FROM node:18
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 # RUN apk add --no-cache libc6-compat
 

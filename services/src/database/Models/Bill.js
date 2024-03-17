@@ -1,87 +1,87 @@
-const mongoose = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
+const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const billSchema = new mongoose.Schema(
   {
     bill_no: {
       type: String,
-      required: true,
+      required: true
     },
     reference: {
-      type: String,
+      type: String
     },
     bill_date: {
-      type: Date,
+      type: Date
     },
     due_date: {
-      type: Date,
+      type: Date
     },
     vendor_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Vendor",
+      ref: 'Vendor'
     },
     purchase_order: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "PurchaseOrder",
-        required:true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'PurchaseOrder',
+      required: true
     },
-    sale_details:{
-      sub_total:Number,
-      discount_amount:Number,
-      tax:Number,
-      total:Number,
+    sale_details: {
+      sub_total: Number,
+      discount_amount: Number,
+      tax: Number,
+      total: Number
     },
     items: [mongoose.Schema.Types.Mixed],
     status: {
       type: String,
       default: 'Bill Created',
-      required: true,
+      required: true
     },
     payment: {
       type: String,
-      default: "Un-paid",
+      default: 'Un-paid'
     },
     description: {
-      type: String,
+      type: String
     },
-    customer_notes:{
-      type:String
+    customer_notes: {
+      type: String
     },
-    shipping_notes:{
-      type:String
+    shipping_notes: {
+      type: String
     },
-    send_mailto:String,
+    send_mailto: String,
     docs: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "MediaManager",
-      },
+        ref: 'MediaManager'
+      }
     ],
     org_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Organization",
+      ref: 'Organization'
     },
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
+      ref: 'User'
+    }
   },
   { timestamps: true },
   {
     toJSON: {
-      transform(doc, ret) {
-        delete ret.__v;
-      },
-    },
+      transform (doc, ret) {
+        delete ret.__v
+      }
+    }
   }
-);
+)
 
 /**
  * Pagination
  */
 
-billSchema.plugin(mongoosePaginate);
+billSchema.plugin(mongoosePaginate)
 
-const Bill = mongoose.model("Bill", billSchema);
+const Bill = mongoose.model('Bill', billSchema)
 
-module.exports = Bill;
+module.exports = Bill

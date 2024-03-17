@@ -11,6 +11,7 @@ const Course = require('./Course')
 const Section = require('./Section')
 const Lecture = require('./Lecture')
 const Student = require('./Student')
+const Batch = require('./Batch')
 
 const models = {
   User,
@@ -25,7 +26,8 @@ const models = {
   Course,
   Section,
   Lecture,
-  Student
+  Student,
+  Batch
 }
 
 module.exports = models
